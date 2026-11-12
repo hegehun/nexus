@@ -220,3 +220,21 @@ button,select { font: inherit; }
   .secondary-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .cooling-panel { grid-column:span 2; }
 }
+
+/* Csak a fejléc útvonalrésze húzható. A gombok és a témaválasztó kattinthatók. */
+.top-header {
+  user-select: none;
+}
+
+.header-path {
+  -webkit-app-region: drag;
+  cursor: grab;
+}
+
+.header-tools,
+.header-tools *,
+.window-controls,
+.window-controls * {
+  -webkit-app-region: no-drag;
+  pointer-events: auto;
+}

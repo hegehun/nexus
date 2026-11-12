@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import "./App.css";
+import WindowControls from "./WindowControls";
 
 const menu = [
   ["Áttekintés", "◈"],
@@ -101,7 +102,7 @@ function App() {
 
       <section className="workspace">
         <header className="top-header">
-          <div className="header-path"><span> NEXUS </span><i>/</i><b>{active}</b></div>
+          <div className="header-path" data-tauri-drag-region><span> NEXUS </span><i>/</i><b>{active}</b></div>
           <div className="header-tools">
             <div className="demo-tag"><span /> SIMULATED DATA</div>
             <select value={theme} onChange={(e) => setTheme(e.target.value)} aria-label="Megjelenési téma">
@@ -113,6 +114,7 @@ function App() {
             </select>
             <div className="profile-mark">NX</div>
           </div>
+          <WindowControls />
         </header>
 
         <div className="dashboard">

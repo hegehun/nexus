@@ -1,0 +1,67 @@
+.window-controls {
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+  margin-left: 12px;
+  -webkit-app-region: no-drag;
+}
+
+.window-control {
+  position: relative;
+  width: 45px;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #aab8d0;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+
+.window-control:hover {
+  background: rgba(255,255,255,.09);
+  color: #fff;
+}
+
+.window-control.close:hover {
+  background: #d94353;
+  color: #fff;
+}
+
+.window-control.minimize span {
+  width: 10px;
+  height: 1px;
+  background: currentColor;
+}
+
+.window-control.maximize span {
+  width: 10px;
+  height: 10px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+}
+
+.window-control.close span {
+  position: relative;
+  width: 12px;
+  height: 12px;
+}
+
+.window-control.close span::before,
+.window-control.close span::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 0;
+  width: 1px;
+  height: 12px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+
+.window-control.close span::after {
+  transform: rotate(-45deg);
+}
