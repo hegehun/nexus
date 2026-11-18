@@ -3,7 +3,7 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "NEXUS main window permissions",
-  "windows": ["main"],
+  "windows": ["main", "fps-overlay"],
   "permissions": [
     "core:default",
     "opener:default",
@@ -11,6 +11,7 @@
     "core:window:allow-toggle-maximize",
     "core:window:allow-close",
     "core:window:allow-start-dragging",
+    "core:webview:allow-create-webview-window",
     "updater:default"
   ]
 }

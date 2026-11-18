@@ -22,9 +22,6 @@
 .cooling-view{display:flex;flex-direction:column;gap:12px}.cooling-summary-panel{display:grid;grid-template-columns:minmax(180px,.72fr) minmax(0,3fr);gap:12px}.cooling-status-banner,.cooling-temperature-card,.cooling-chart-panel,.cooling-fan-panel{border:1px solid rgba(125,157,208,.14);border-radius:12px;background:linear-gradient(145deg,rgba(17,24,38,.97),rgba(9,13,23,.98))}.cooling-status-banner{display:flex;flex-direction:column;justify-content:center;gap:7px;padding:15px}.cooling-status-banner>span,.cooling-temperature-card>span{color:#8796ad;font-size:8px;font-weight:700;letter-spacing:.9px;text-transform:uppercase}.cooling-status-banner>strong{font-size:20px}.cooling-status-banner>small,.cooling-temperature-card>small{color:#8796ad;font-size:8px;line-height:1.45}.cooling-status-good>strong{color:#65dcab}.cooling-status-warning>strong{color:#ffbf69}.cooling-status-critical>strong{color:#ff718b}.cooling-status-unknown>strong{color:#9aa8bf}.cooling-temperature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.cooling-temperature-card{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:13px;box-shadow:inset 2px 0 var(--cooling-color)}.cooling-temperature-card>strong{color:#eef3ff;font-size:20px;letter-spacing:-.4px}.cooling-temperature-warning>strong{color:#ffbf69}.cooling-temperature-critical>strong{color:#ff718b}.cooling-temperature-unknown>strong{color:#9aa8bf}.cooling-chart-panel{padding:14px}.cooling-chart-controls{display:flex;align-items:flex-end;flex-wrap:wrap;gap:10px;margin-bottom:10px}.cooling-chart-controls>div{flex:1;min-width:190px}.cooling-chart-controls h2,.cooling-fan-panel h2,.cooling-details-header h2{margin:0 0 4px;font-size:12px}.cooling-chart-controls small,.cooling-fan-panel header small{color:#8796ad;font-size:8px}.cooling-select-control{display:flex;flex-direction:column;gap:4px;color:#8796ad;font-size:8px}.cooling-select-control select{min-width:112px;padding:7px 9px;border:1px solid rgba(255,255,255,.12);border-radius:6px;background:#111a2a;color:#dce6f7;font-size:9px}.cooling-temperature-chart-card{margin-top:4px}.cooling-scale-note{display:block;margin:6px 0 0 48px;color:#ffbf69;font-size:8px}.cooling-fan-panel{padding:14px}.cooling-fan-panel header{margin-bottom:8px}.cooling-fan-panel p{margin:0;color:#8796ad;font-size:9px}.cooling-fan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}.cooling-fan-reading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;min-width:0;padding:10px 11px;border:1px solid rgba(125,157,208,.12);border-radius:8px;background:rgba(255,255,255,.018)}.cooling-fan-copy{display:flex;min-width:0;flex-direction:column;gap:3px}.cooling-fan-copy>span{color:#dce6f7;font-size:9px;line-height:1.3;overflow-wrap:anywhere}.cooling-fan-copy>small{color:#8796ad;font-size:8px;line-height:1.35;overflow-wrap:anywhere}.cooling-fan-rpm{flex-shrink:0;color:#72c8ff;font-size:11px;white-space:nowrap}.cooling-details-panel{margin-top:0}.cooling-details-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}.cooling-details-header label{display:flex;align-items:center;gap:7px;color:#9aa8bf;font-size:8px;cursor:pointer}.cooling-details-header input{width:14px;height:14px;margin:0;accent-color:var(--accent)}@media(max-width:1100px){.cooling-summary-panel{grid-template-columns:1fr}.cooling-status-banner{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:9px}.cooling-status-banner>small{justify-self:end;text-align:right}}.cooling-chart-plot{position:relative}.cooling-crosshair{stroke:rgba(220,230,247,.48);stroke-width:1;stroke-dasharray:3 4;pointer-events:none}.cooling-hover-tooltip{position:absolute;z-index:3;display:grid;gap:5px;min-width:150px;max-width:min(220px,calc(100% - 16px));padding:8px 10px;border:1px solid rgba(125,157,208,.28);border-radius:8px;background:rgba(15,22,34,.97);box-shadow:0 8px 24px rgba(0,0,0,.35);color:#e8effb;font-size:8px;pointer-events:none}.cooling-hover-tooltip>small{padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,.08);color:#9aa8bf;font-size:8px}.cooling-hover-row,.cooling-hover-row>span{display:flex;align-items:center;justify-content:space-between;gap:9px}.cooling-hover-row>span{justify-content:flex-start;min-width:0;color:#b7c4d8}.cooling-hover-row>span>i{flex:none;width:10px;height:3px;border-radius:2px}.cooling-hover-row>strong{flex:none;color:#e8effb;font-size:8px;font-weight:600}.cooling-chart-legend{display:flex;flex-wrap:wrap;gap:5px 9px;margin:8px 0 0 42px}.cooling-series-toggle{display:flex;align-items:center;gap:6px;padding:4px 6px;border:1px solid transparent;border-radius:5px;background:transparent;color:#9aa8bf;font:inherit;font-size:8px;cursor:pointer}.cooling-series-toggle:hover{border-color:rgba(125,157,208,.2);background:rgba(255,255,255,.025);color:#e8effb}.cooling-series-toggle i{width:13px;height:3px;border-radius:2px;background:var(--series-color)}.cooling-series-toggle.is-hidden{opacity:.5}.cooling-series-toggle.is-hidden i{border:1px solid var(--series-color);background:transparent}@media(max-width:1100px){.cooling-chart-legend{margin-left:0}}.cooling-series-control{display:flex;align-items:center;gap:2px;min-width:0;max-width:min(100%,460px);padding:1px 3px;border:1px solid rgba(125,157,208,.1);border-radius:6px}.cooling-series-toggle{flex:1;min-width:0;max-width:none}.cooling-series-toggle>span{overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:anywhere}.cooling-series-color-label{position:relative;display:grid;flex:none;width:24px;height:24px;place-items:center;cursor:pointer}.cooling-series-color{width:18px;height:18px;padding:2px;border:1px solid rgba(255,255,255,.18);border-radius:5px;background:#0b101a;cursor:pointer}.cooling-series-color::-webkit-color-swatch-wrapper{padding:0}.cooling-series-color::-webkit-color-swatch{border:0;border-radius:3px}.cooling-series-color-label .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.cooling-hover-row>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Match every native scroll area to the active NEXUS theme. */
 *{scrollbar-color:rgba(var(--accent-rgb),.44) rgba(8,12,20,.68);scrollbar-width:thin}*::-webkit-scrollbar{width:10px;height:10px}*::-webkit-scrollbar-track{border-radius:10px;background:rgba(8,12,20,.68)}*::-webkit-scrollbar-thumb{min-height:34px;border:2px solid transparent;border-radius:10px;background:rgba(var(--accent-rgb),.44);background-clip:padding-box}*::-webkit-scrollbar-thumb:hover{background:rgba(var(--accent-rgb),.72);background-clip:padding-box}*::-webkit-scrollbar-thumb:active{background:var(--accent);background-clip:padding-box}*::-webkit-scrollbar-corner{background:transparent}*::-webkit-scrollbar-button,*::-webkit-scrollbar-button:single-button,*::-webkit-scrollbar-button:vertical:decrement,*::-webkit-scrollbar-button:vertical:increment,*::-webkit-scrollbar-button:horizontal:decrement,*::-webkit-scrollbar-button:horizontal:increment,*::-webkit-scrollbar-button:vertical:start:decrement,*::-webkit-scrollbar-button:vertical:end:increment,*::-webkit-scrollbar-button:horizontal:start:decrement,*::-webkit-scrollbar-button:horizontal:end:increment{display:none!important;width:0!important;height:0!important;background:none!important}
-.fan-control-native-view{display:flex;flex-direction:column;gap:12px}.fan-control-native-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:9px}.fan-control-native-heading>div{min-width:0}.fan-control-native-heading h2{margin:0 0 6px;font-size:13px}.fan-control-native-heading p{margin:0;color:#8796ad;font-size:9px;line-height:1.5}.fan-control-native-heading>span{flex:none;padding:6px 8px;border:1px solid rgba(var(--accent-rgb),.2);border-radius:6px;color:var(--accent);font-size:8px}.fan-control-native-row{grid-template-columns:minmax(160px,1fr) auto minmax(190px,auto)}.fan-control-native-row span{color:#72c8ff;font-size:9px}.fan-control-native-row small{max-width:420px;text-align:right;overflow-wrap:anywhere}@media(max-width:900px){.fan-control-native-row{grid-template-columns:1fr auto}.fan-control-native-row small{grid-column:1/-1;text-align:left}.fan-control-native-heading{flex-direction:column}.fan-control-native-heading>span{align-self:flex-start}}
-.fan-control-native-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:9px}.fan-control-native-card{min-width:0;padding:12px;border:1px solid rgba(125,157,208,.13);border-radius:9px;background:rgba(255,255,255,.018)}.fan-control-native-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.fan-control-native-card-head>div{display:flex;min-width:0;flex-direction:column;gap:4px}.fan-control-native-card-head strong{color:#dce6f7;font-size:9px;overflow-wrap:anywhere}.fan-control-native-card-head small{color:#8796ad;font-size:8px;overflow-wrap:anywhere}.fan-control-native-card-head>span{flex:none;font-size:7px;font-weight:800;letter-spacing:.6px}.fan-control-native-card-head .is-writable{color:#64d9a5}.fan-control-native-card-head .is-readonly{color:#8796ad}.fan-control-native-current{display:flex;align-items:baseline;gap:8px;margin-top:12px;padding:8px 0;border-top:1px solid rgba(255,255,255,.06);color:#8796ad;font-size:8px}.fan-control-native-current b{color:#72c8ff;font-size:14px}.fan-control-native-current small{margin-left:auto;font-size:7px}.fan-control-native-actions{margin-top:9px}.fan-control-native-actions label{display:flex;flex-direction:column;gap:5px;color:#9aa8bf;font-size:8px}.fan-control-native-actions input[type=range]{width:100%;margin:2px 0 8px;accent-color:var(--accent);cursor:pointer}.fan-control-native-actions>div{display:flex;flex-wrap:wrap;gap:7px}.fan-control-native-actions button{padding:7px 9px;border:1px solid rgba(var(--accent-rgb),.35);border-radius:6px;background:rgba(var(--accent-rgb),.09);color:#dce6f7;font-size:8px;cursor:pointer}.fan-control-native-actions button:hover:not(:disabled){border-color:rgba(var(--accent-rgb),.65);color:var(--accent)}.fan-control-native-actions button:disabled{opacity:.45;cursor:default}.fan-control-native-actions .fan-control-native-reset{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.025)}.fan-control-native-status{display:block;margin-top:8px;color:#9aa8bf;font-size:8px;line-height:1.4;overflow-wrap:anywhere}
-.fan-control-native-feedback{margin-top:7px;color:#8796ad;font-size:8px;line-height:1.4;overflow-wrap:anywhere}.fan-control-native-feedback.has-zero-rpm{color:#e7b36a}
 
 .cpu-detail-panel{margin-bottom:12px}.cpu-detail-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px}.cpu-detail-stat{min-width:0;padding:13px;border:1px solid rgba(125,157,208,.13);border-radius:9px;background:rgba(255,255,255,.018);display:flex;flex-direction:column;gap:6px}.cpu-detail-stat span,.cpu-core-metrics small{color:#91a1bb;font-size:8px}.cpu-detail-stat strong{color:#72c8ff;font-size:20px;line-height:1.1}.cpu-detail-stat small{color:#75849c;font-size:8px;line-height:1.4}.cpu-detail-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.cpu-detail-heading h2{margin:0}.cpu-detail-heading small{color:#8292ab;font-size:8px}.cpu-core-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:9px}.cpu-core-card{min-width:0;padding:11px;border:1px solid rgba(125,157,208,.13);border-radius:9px;background:rgba(255,255,255,.018)}.cpu-core-card-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.cpu-core-card-heading b{color:#dce6f7;font-size:9px}.cpu-core-card-heading span{color:#72c8ff;font-size:12px;font-weight:700}.cpu-core-load-track{height:4px;margin:9px 0 11px;border-radius:4px;background:rgba(255,255,255,.09);overflow:hidden}.cpu-core-load-track i{display:block;height:100%;border-radius:inherit;background:var(--accent);transition:width .25s ease}.cpu-core-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}.cpu-core-metrics div{display:flex;flex-direction:column;gap:4px}.cpu-core-metrics strong{color:#dce6f7;font-size:9px}
 
@@ -35,3 +32,422 @@
 .storage-space-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:-2px 0 12px;padding:9px 0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}.storage-space-values>div{display:flex;flex-direction:column;gap:5px;min-width:0}.storage-space-values small{color:#91a1bb;font-size:7px}.storage-space-values strong{color:#dce6f7;font-size:10px}@media(max-width:500px){.storage-space-values{grid-template-columns:1fr}}
 
 .settings-updater-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}@media(max-width:700px){.settings-updater-row{grid-template-columns:1fr auto}.settings-updater-row>span{grid-column:1/-1}.settings-updater-row .settings-updater-actions{grid-column:1/-1;justify-content:flex-start}}
+
+/* A more finished, consistent theme treatment across the existing NEXUS UI. */
+.nexus-app{--accent:#378fff;--accent-rgb:55,143,255;background:radial-gradient(ellipse at 78% 8%,rgba(var(--accent-rgb),.12),transparent 38%),radial-gradient(ellipse at 8% 100%,rgba(var(--accent-rgb),.035),transparent 34%),#080a10;transition:background .25s ease}
+.nexus-app.theme-purple{--accent:#b18aff;--accent-rgb:177,138,255}
+.nexus-app.theme-green{--accent:#42dda5;--accent-rgb:66,221,165}
+.nexus-app.theme-red{--accent:#ff637b;--accent-rgb:255,99,123}
+.nexus-app.theme-rose{--accent:#ff708d;--accent-rgb:255,112,141;background:radial-gradient(ellipse at 78% 8%,rgba(121,37,73,.25),transparent 42%),radial-gradient(ellipse at 8% 100%,rgba(53,32,69,.13),transparent 36%),#090a12}
+.nexus-app.theme-ice{--accent:#82d9ff;--accent-rgb:130,217,255}
+.nexus-app.theme-aurora{--accent:#22e0c5;--accent-rgb:34,224,197;background:linear-gradient(180deg,rgba(5,11,25,.68),rgba(5,11,25,.9)),url('./assets/aurora-bg.png') center 44%/cover fixed,#07101e}
+.nexus-app.theme-aurora .sidebar{background:rgba(5,11,24,.88);border-right-color:rgba(84,197,235,.2);backdrop-filter:blur(18px)}
+.nexus-app.theme-aurora .titlebar{background:rgba(7,13,27,.78);border-bottom-color:rgba(84,197,235,.2);backdrop-filter:blur(18px)}
+.nexus-app.theme-aurora .hardware-card,.nexus-app.theme-aurora .diagnostics-panel,.nexus-app.theme-aurora .performance-stat-card,.nexus-app.theme-aurora .performance-chart-card,.nexus-app.theme-aurora .performance-fps-panel,.nexus-app.theme-aurora .cooling-status-banner,.nexus-app.theme-aurora .cooling-temperature-card,.nexus-app.theme-aurora .cooling-chart-panel,.nexus-app.theme-aurora .cooling-fan-panel,.nexus-app.theme-aurora .cooling-fan-reading,.nexus-app.theme-aurora .storage-device-card,.nexus-app.theme-aurora .cpu-detail-stat,.nexus-app.theme-aurora .cpu-core-card,.nexus-app.theme-aurora .gpu-memory-card,.nexus-app.theme-aurora .quick-card{border-color:rgba(105,194,235,.28);background:linear-gradient(145deg,rgba(19,37,62,.86),rgba(8,20,39,.91));backdrop-filter:blur(14px)}
+.nexus-app.theme-aurora .health-banner{border-color:rgba(34,224,197,.52);background:linear-gradient(110deg,rgba(15,107,112,.5),rgba(22,45,81,.88) 54%,rgba(61,39,111,.52));backdrop-filter:blur(18px)}
+.nexus-app.theme-aurora .card-icon,.nexus-app.theme-aurora .quick-icon,.nexus-app.theme-aurora .storage-device-icon{color:#58f2df;background:rgba(34,224,197,.16);box-shadow:inset 0 0 16px rgba(34,224,197,.07)}
+.nexus-app.theme-aurora .gpu-card .card-icon{color:#c19cff;background:rgba(171,124,255,.18)}
+.nexus-app.theme-aurora .ram-card .card-icon{color:#62ebc1;background:rgba(68,220,176,.16)}
+.nexus-app.theme-aurora .storage-card .card-icon{color:#a993ff;background:rgba(153,125,255,.17)}
+.nexus-app.theme-aurora .hardware-card:hover,.nexus-app.theme-aurora .quick-card:hover,.nexus-app.theme-aurora .storage-device-card:hover,.nexus-app.theme-aurora .cpu-detail-stat:hover{border-color:rgba(34,224,197,.58);box-shadow:0 14px 36px rgba(0,0,0,.24),0 0 28px rgba(34,224,197,.09)}
+.nexus-app.theme-rose .sidebar{background:linear-gradient(180deg,rgba(18,11,22,.98),rgba(8,10,17,.98));border-right-color:rgba(255,112,141,.16)}
+.nexus-app.theme-rose .titlebar{background:linear-gradient(100deg,rgba(17,11,21,.98),rgba(12,13,23,.94));border-bottom-color:rgba(255,112,141,.16)}
+.nexus-app.theme-rose .hardware-card,
+.nexus-app.theme-rose .diagnostics-panel,
+.nexus-app.theme-rose .performance-stat-card,
+.nexus-app.theme-rose .performance-chart-card,
+.nexus-app.theme-rose .performance-fps-panel,
+.nexus-app.theme-rose .cooling-status-banner,
+.nexus-app.theme-rose .cooling-temperature-card,
+.nexus-app.theme-rose .cooling-chart-panel,
+.nexus-app.theme-rose .cooling-fan-panel,
+.nexus-app.theme-rose .cooling-fan-reading,
+.nexus-app.theme-rose .storage-device-card,
+.nexus-app.theme-rose .cpu-detail-stat,
+.nexus-app.theme-rose .cpu-core-card,
+.nexus-app.theme-rose .gpu-memory-card,
+.nexus-app.theme-rose .quick-card{border-color:rgba(255,132,158,.18);background:linear-gradient(145deg,rgba(35,24,39,.98),rgba(15,18,31,.99))}
+.nexus-app.theme-rose .health-banner{border-color:rgba(255,112,141,.5);background:linear-gradient(112deg,rgba(104,36,62,.42),rgba(18,27,48,.97) 42%,rgba(22,36,66,.96));box-shadow:inset 0 1px rgba(255,255,255,.07),0 14px 34px rgba(0,0,0,.2)}
+.nexus-app.theme-rose .hardware-card:hover,
+.nexus-app.theme-rose .quick-card:hover,
+.nexus-app.theme-rose .storage-device-card:hover,
+.nexus-app.theme-rose .performance-stat-card:hover,
+.nexus-app.theme-rose .cpu-detail-stat:hover{border-color:rgba(255,112,141,.48);box-shadow:0 14px 32px rgba(0,0,0,.22),0 0 24px rgba(255,112,141,.075)}
+.nexus-app.theme-rose .card-icon,
+.nexus-app.theme-rose .quick-icon,
+.nexus-app.theme-rose .storage-device-icon{color:#ff829b;background:rgba(255,112,141,.16)}
+.nexus-app.theme-rose .gpu-card .card-icon,.nexus-app.theme-rose .ram-card .card-icon,.nexus-app.theme-rose .storage-card .card-icon{color:#ff829b;background:rgba(255,112,141,.16)}
+.brand-mark{position:relative;overflow:hidden;border-radius:12px;background:linear-gradient(145deg,rgba(var(--accent-rgb),.23),rgba(15,22,36,.78));box-shadow:0 0 24px rgba(var(--accent-rgb),.18),inset 0 1px rgba(255,255,255,.15);text-shadow:0 0 16px rgba(var(--accent-rgb),.5);transition:border-color .2s,box-shadow .2s,color .2s}
+.brand-mark:after{content:"";position:absolute;inset:3px;border:1px solid rgba(var(--accent-rgb),.17);border-radius:9px;pointer-events:none}
+.brand small{color:rgba(var(--accent-rgb),.66);transition:color .2s}
+.titlebar{background:linear-gradient(100deg,rgba(8,12,21,.95),rgba(10,14,24,.82));transition:border-color .2s}
+.titlebar select,.settings-theme-select{transition:border-color .18s,box-shadow .18s,color .18s}
+.titlebar select:hover,.settings-theme-select:hover{border-color:rgba(var(--accent-rgb),.48);color:#eaf3ff}
+.titlebar select:focus-visible,.settings-theme-select:focus-visible{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.14)}
+.nav-item,.quick-card,.hardware-card,.diagnostics-panel,.cooling-temperature-card,.cooling-chart-panel,.cooling-fan-panel{transition:border-color .2s,background-color .2s,box-shadow .2s,transform .2s}
+.nav-item.active{background:linear-gradient(100deg,rgba(var(--accent-rgb),.19),rgba(var(--accent-rgb),.045));box-shadow:inset 2px 0 var(--accent),0 0 24px rgba(var(--accent-rgb),.055)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid rgba(var(--accent-rgb),.78);outline-offset:2px}
+.health-card{box-shadow:0 14px 35px rgba(0,0,0,.12),inset 0 1px rgba(255,255,255,.035)}
+.health-fill{box-shadow:0 0 18px rgba(var(--accent-rgb),.26)}
+.settings-theme-select{background:linear-gradient(145deg,rgba(var(--accent-rgb),.09),#111827)}
+@media(prefers-reduced-motion:reduce){.nexus-app,.brand-mark,.titlebar,.titlebar select,.settings-theme-select,.nav-item,.quick-card,.hardware-card,.diagnostics-panel,.cooling-temperature-card,.cooling-chart-panel,.cooling-fan-panel{transition:none}}
+
+/* NEXUS 0.3 overview: clearer type, Hungarian labels, and a distinct icon for each module. */
+.nexus-app{display:grid;grid-template-columns:244px minmax(0,1fr);grid-template-rows:66px minmax(0,1fr);min-width:1000px;background:radial-gradient(ellipse at 76% 0%,rgba(var(--accent-rgb),.13),transparent 42%),#080a10}
+.titlebar{grid-column:1/-1;grid-row:1;height:66px;min-height:66px;padding:0 0 0 24px;z-index:10}
+.titlebar-brand{height:100%;min-width:0;display:flex;align-items:center;gap:14px;flex:1;-webkit-app-region:drag}
+.titlebar-brand .brand-mark{width:42px;height:42px;flex:none;display:grid;place-items:center;color:var(--accent);font-size:25px;font-weight:900}
+.titlebar-wordmark{display:flex;flex-direction:column;gap:2px}.titlebar-wordmark b{font-size:20px;letter-spacing:3px;color:#f2f6ff}.titlebar-wordmark small{font-size:9px;letter-spacing:1.4px;color:#7e91ad}
+.titlebar-divider{height:34px;width:1px;margin:0 10px;background:rgba(160,184,220,.2)}.titlebar-product{color:#b7c7df;font-size:16px;letter-spacing:.1px}
+.titlebar-actions{gap:14px}.titlebar-actions .data-mode{font-size:10px;white-space:nowrap}.titlebar-actions .data-mode i{width:8px;height:8px}.user-chip{width:38px;height:38px;font-size:12px}
+.sidebar{grid-column:1;grid-row:2;width:auto;min-width:0;height:100%;padding:21px 15px 15px;border-right:1px solid rgba(130,160,210,.13);background:rgba(7,10,18,.97)}
+.sidebar-scroll{scrollbar-width:thin;scrollbar-color:rgba(var(--accent-rgb),.55) rgba(255,255,255,.04)}.nav-section{margin-bottom:27px}.nav-label{padding:0 12px 11px;font-size:10px;letter-spacing:2px}
+.nav-item{height:46px;gap:13px;padding:0 12px;margin:4px 0;font-size:14px;border-radius:9px}.nav-icon{width:24px;height:24px;display:grid;place-items:center;flex:none}.nav-icon svg{width:21px;height:21px}.nav-alert{font-size:10px}
+.sidebar-bottom{padding-top:13px}.engine-status{gap:10px;padding:12px 10px}.engine-status b{font-size:11px}.engine-status small{font-size:10px}.engine-status em{font-size:9px}.version{padding:13px 8px 0;font-size:9px}
+.main-area{grid-column:2;grid-row:2;min-height:0}.content{max-width:none;padding:31px 32px 22px;scrollbar-width:thin;scrollbar-color:rgba(var(--accent-rgb),.55) rgba(255,255,255,.035)}
+.page-heading{align-items:center;margin-bottom:22px}.eyebrow{font-size:11px;letter-spacing:1.8px}.eyebrow i{width:8px;height:8px}.page-heading h1{font-size:35px;letter-spacing:-.8px;margin:9px 0 5px}.page-heading p{font-size:14px;line-height:1.5}.heading-actions{gap:10px}.heading-actions button{padding:10px 14px;font-size:12px}
+.page-title-row{display:flex;align-items:center;gap:12px;min-height:42px}
+.page-title-row>span{width:32px;height:32px;flex:0 0 32px;display:grid;place-items:center;border:1px solid rgba(var(--accent-rgb),.3);border-radius:9px;background:rgba(var(--accent-rgb),.09);color:var(--accent)}
+.page-title-row>span svg{display:block;width:19px;height:19px;stroke-width:1.8}
+.page-title-row h1{margin:9px 0 5px}
+/* Carry the overview card treatment through the detail pages. */
+.nexus-app .diagnostics-panel,
+.nexus-app .performance-stat-card,
+.nexus-app .performance-chart-card,
+.nexus-app .performance-fps-panel,
+.nexus-app .cooling-status-banner,
+.nexus-app .cooling-temperature-card,
+.nexus-app .cooling-chart-panel,
+.nexus-app .cooling-fan-panel,
+.nexus-app .storage-device-card,
+.nexus-app .cpu-detail-stat,
+.nexus-app .cpu-core-card,
+.nexus-app .gpu-memory-card{
+  border-color:rgba(125,157,208,.19);
+  border-radius:14px;
+  background:linear-gradient(145deg,rgba(18,28,46,.98),rgba(10,16,29,.99));
+  box-shadow:0 12px 30px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.035);
+}
+.nexus-app .diagnostics-panel,
+.nexus-app .performance-chart-card,
+.nexus-app .cooling-chart-panel,
+.nexus-app .cooling-fan-panel{padding:18px}
+.nexus-app .performance-stat-card,
+.nexus-app .cooling-temperature-card,
+.nexus-app .storage-device-card,
+.nexus-app .cpu-detail-stat,
+.nexus-app .cpu-core-card,
+.nexus-app .gpu-memory-card{transition:border-color .2s,transform .2s,box-shadow .2s}
+.nexus-app .performance-stat-card:hover,
+.nexus-app .cooling-temperature-card:hover,
+.nexus-app .storage-device-card:hover,
+.nexus-app .cpu-detail-stat:hover,
+.nexus-app .cpu-core-card:hover,
+.nexus-app .gpu-memory-card:hover{border-color:rgba(var(--accent-rgb),.38);transform:translateY(-2px);box-shadow:0 14px 32px rgba(0,0,0,.2),0 0 22px rgba(var(--accent-rgb),.05)}
+.nexus-app .performance-stat-card{border-radius:14px}
+.nexus-app .performance-chart-card,.nexus-app .cooling-chart-panel{position:relative;overflow:hidden}
+.nexus-app .performance-chart-card:before,.nexus-app .cooling-chart-panel:before{content:"";position:absolute;right:-72px;top:-120px;width:200px;height:200px;border:1px solid rgba(var(--accent-rgb),.065);border-radius:50%;box-shadow:0 0 0 24px rgba(var(--accent-rgb),.018),0 0 0 48px rgba(var(--accent-rgb),.012);pointer-events:none}
+.nexus-app .performance-chart-header,.nexus-app .cooling-chart-controls,.nexus-app .cooling-fan-panel>header,.nexus-app .cooling-details-header,.nexus-app .cpu-detail-heading,.nexus-app .storage-device-heading{position:relative;z-index:1}
+.nexus-app .cooling-fan-reading{border-color:rgba(125,157,208,.16);border-radius:10px;background:rgba(255,255,255,.035)}
+.nexus-app .cooling-fan-reading:hover{border-color:rgba(var(--accent-rgb),.3);background:rgba(var(--accent-rgb),.055)}
+.nexus-app .diagnostics-row{border-color:rgba(151,183,230,.13)}
+.nexus-app .diagnostics-panel h2,.nexus-app .cpu-detail-heading h2,.nexus-app .storage-device-heading h3{color:#eef4ff}
+.nexus-app .diagnostics-panel button,.nexus-app .diagnostics-panel select,.nexus-app .diagnostics-panel input:not([type="checkbox"]),.nexus-app .cooling-select-control select{border-radius:8px}
+/* Detailed metric tiles follow the large, icon led overview cards. */
+.nexus-app .cpu-detail-summary-grid{gap:12px}
+.nexus-app .cpu-detail-stat{position:relative;min-height:142px;justify-content:flex-start;gap:9px;padding:17px;border-color:rgba(var(--accent-rgb),.2);border-radius:14px;background:linear-gradient(145deg,rgba(var(--accent-rgb),.075),rgba(18,28,46,.98) 38%,rgba(10,16,29,.99))}
+.nexus-app .cpu-detail-stat>span{display:flex;align-items:center;gap:9px;color:#cfddf2;font-size:12px;font-weight:650}
+.nexus-app .cpu-detail-stat>span svg{width:27px;height:27px;flex:none;padding:5px;border-radius:8px;background:rgba(var(--accent-rgb),.15);color:var(--accent)}
+.nexus-app .cpu-detail-stat>strong{margin-top:auto;color:#f3f7ff;font-size:27px;line-height:1.15;letter-spacing:-.65px}
+.nexus-app .cpu-detail-stat>small{color:#9eafc8;font-size:10px;line-height:1.4}
+.nexus-app .cpu-core-card,.nexus-app .gpu-memory-card{padding:14px;border-radius:12px;background:linear-gradient(145deg,rgba(18,28,46,.98),rgba(10,16,29,.99))}
+.nexus-app .cpu-core-card-heading span{color:var(--accent)}
+.nexus-app .cpu-core-load-track i{background:var(--accent)}
+.nexus-app .storage-device-card{position:relative;overflow:hidden;padding:16px;border-color:rgba(var(--accent-rgb),.2);border-radius:14px;background:linear-gradient(145deg,rgba(var(--accent-rgb),.07),rgba(18,28,46,.98) 36%,rgba(10,16,29,.99))}
+.nexus-app .storage-device-heading{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:11px}
+.nexus-app .storage-device-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:11px;background:rgba(var(--accent-rgb),.16);color:var(--accent)}
+.nexus-app .storage-device-icon svg{width:25px;height:25px}
+.nexus-app .storage-device-heading h3{font-size:14px;line-height:1.35}
+.nexus-app .storage-device-temperature{padding:13px 14px;border:1px solid rgba(151,183,230,.13);border-radius:10px;background:rgba(5,10,19,.26)}
+.nexus-app .storage-device-temperature small,.nexus-app .storage-space-values small{font-size:10px}
+.nexus-app .storage-device-temperature strong{font-size:27px}
+.nexus-app .storage-space-values{margin:0 0 12px;padding:12px 0;border-color:rgba(151,183,230,.13)}
+.nexus-app .storage-space-values strong{color:#edf4ff;font-size:14px}
+.nexus-app .cooling-temperature-card{position:relative;min-height:142px;gap:10px;padding:16px;border-color:color-mix(in srgb,var(--cooling-color) 32%,rgba(125,157,208,.16));background:linear-gradient(145deg,color-mix(in srgb,var(--cooling-color) 9%,rgba(18,28,46,.98)),rgba(10,16,29,.99))}
+.nexus-app .cooling-temperature-card>span{color:#d1def1;font-size:12px;letter-spacing:.4px}
+.nexus-app .cooling-temperature-card>strong{font-size:28px;letter-spacing:-.7px}
+.nexus-app .cooling-temperature-card>small{font-size:10px}
+.nexus-app .cooling-fan-reading{min-height:62px;padding:12px 14px;border-radius:11px;background:linear-gradient(145deg,rgba(18,28,46,.95),rgba(10,16,29,.99))}
+.nexus-app .cooling-fan-rpm{color:#e9f3ff;font-size:16px;font-weight:750}
+.nexus-app .performance-stat-card{min-height:142px;position:relative;justify-content:center;gap:10px;padding:17px;border-color:color-mix(in srgb,var(--stat-accent) 30%,rgba(125,157,208,.16));background:linear-gradient(145deg,color-mix(in srgb,var(--stat-accent) 8%,rgba(18,28,46,.98)),rgba(10,16,29,.99));box-shadow:none}
+.nexus-app .performance-stat-card>span{font-size:12px;letter-spacing:.5px}
+.nexus-app .performance-stat-card strong{font-size:30px}
+.nexus-app .performance-stat-card small{font-size:10px}
+.nexus-app .performance-fps-panel{min-height:94px;padding:18px;border-color:rgba(var(--accent-rgb),.2);background:linear-gradient(110deg,rgba(var(--accent-rgb),.08),rgba(18,28,46,.98) 45%,rgba(10,16,29,.99))}
+.nexus-app .performance-fps-panel strong{font-size:28px;color:#f0f5ff}
+.nexus-app .cooling-status-banner{min-height:142px;padding:18px;border-color:rgba(var(--accent-rgb),.22);background:linear-gradient(120deg,rgba(var(--accent-rgb),.11),rgba(18,28,46,.98) 60%,rgba(10,16,29,.99))}
+.nexus-app .cooling-status-banner>strong{font-size:27px}
+.nexus-app .cooling-status-banner>small{font-size:11px}
+.nexus-app .gpu-memory-panel{padding:14px 16px;margin-top:10px;margin-bottom:10px}
+.nexus-app .gpu-memory-panel .cpu-detail-heading{margin-bottom:7px}
+.nexus-app .gpu-memory-panel .cpu-detail-heading h2{font-size:15px}
+.nexus-app .gpu-memory-panel .cpu-detail-heading small{font-size:10px}
+.nexus-app .gpu-memory-panel .device-memory-track{height:6px;margin:7px 0}
+.nexus-app .gpu-memory-panel .device-memory-values{gap:8px}
+.nexus-app .gpu-memory-panel .device-memory-values>div{gap:3px}
+.nexus-app .gpu-memory-panel .device-memory-values small{font-size:9px}
+.nexus-app .gpu-memory-panel .device-memory-values strong{font-size:14px}
+.nexus-app .storage-detail-panel>.cpu-detail-heading h2{font-size:18px}
+.nexus-app .storage-detail-panel>.cpu-detail-heading small{font-size:11px}
+.nexus-app .storage-detail-panel>.cpu-detail-heading>span{font-size:10px}
+.nexus-app .storage-device-heading h3{font-size:15px}
+.nexus-app .storage-live-status,.nexus-app .storage-empty-status{font-size:9px}
+.nexus-app .storage-device-temperature small,.nexus-app .storage-space-values small,.nexus-app .storage-sensor-details summary{font-size:11px}
+.nexus-app .storage-space-values strong{font-size:15px}
+.nexus-app .storage-sensor-details .diagnostics-row{font-size:11px}
+.nexus-app .storage-sensor-details .diagnostics-row small{font-size:10px}
+/* Aurora Nocturne: match the selected full-window reference, including the live top strip. */
+.nexus-app.theme-aurora{--accent:#22e0c5;--accent-rgb:34,224,197;background-color:#07101e;background-image:linear-gradient(180deg,rgba(4,10,23,.18),rgba(4,10,23,.48)),url('./assets/aurora-bg.png');background-size:cover;background-position:center 44%;background-attachment:fixed}
+.nexus-app{grid-template-columns:205px minmax(0,1fr);grid-template-rows:58px minmax(0,1fr)}
+.nexus-app .titlebar{grid-column:2;grid-row:1;height:58px;min-height:58px;padding:0 0 0 20px;gap:10px;background:rgba(7,13,27,.88)}
+.nexus-app .sidebar{grid-column:1;grid-row:1 / span 2;padding:19px 13px 13px;background:rgba(5,11,24,.94)}
+.nexus-app .brand{flex:none;gap:11px;padding:3px 5px 28px}
+.nexus-app .brand>span:last-child{display:flex;flex-direction:column;gap:3px}
+.nexus-app .brand b{font-size:18px;letter-spacing:2.8px;color:#f2f6ff}
+.nexus-app .brand small{font-size:7px;letter-spacing:1.4px;color:#82a0bd}
+.nexus-app .titlebar-summary{display:flex;align-items:center;min-width:0;flex:1;height:100%;-webkit-app-region:drag}
+.nexus-app .titlebar-nexus{flex:none;padding-right:17px;margin-right:12px;border-right:1px solid rgba(143,187,220,.22);color:#f2f6ff;font-size:18px;letter-spacing:1px}
+.nexus-app .top-hardware-stats{display:flex;align-items:center;min-width:0;flex:1}
+.nexus-app .top-hardware-stat{min-width:0;display:flex;align-items:center;gap:7px;padding:0 12px;border-right:1px solid rgba(143,187,220,.18);color:#d9e7f8;font-size:11px;white-space:nowrap}
+.nexus-app .top-hardware-stat svg{width:20px;height:20px;flex:none;color:#25e1cb}
+.nexus-app .top-hardware-stat b{color:#eaf2ff;font-size:11px;letter-spacing:.4px}
+.nexus-app .top-hardware-stat span{color:#c5d7ec}
+.nexus-app .top-hardware-stat i{width:1px;height:15px;background:rgba(143,187,220,.22)}
+.nexus-app .top-hardware-stat:nth-child(even) svg{color:#b58aff}
+.nexus-app .titlebar-actions{height:100%;gap:8px;flex:none}
+.nexus-app .theme-picker-trigger{min-width:150px;height:38px}
+.nexus-app .user-chip{display:none}
+.nexus-app .window-controls{margin-left:0}
+.nexus-app .main-area{grid-column:2;grid-row:2;min-height:0}
+.nexus-app .content{padding:23px 22px 18px}
+.nexus-app .titlebar{border-bottom-color:rgba(105,194,235,.2);backdrop-filter:blur(18px)}
+.nexus-app.theme-aurora .sidebar{background:linear-gradient(180deg,rgba(5,13,30,.93),rgba(6,12,25,.96));border-right-color:rgba(89,193,224,.22);backdrop-filter:blur(18px)}
+.nexus-app.theme-aurora .titlebar{background:rgba(5,13,28,.84);border-bottom-color:rgba(89,193,224,.24);backdrop-filter:blur(18px)}
+.nexus-app.theme-aurora .hardware-card,.nexus-app.theme-aurora .diagnostics-panel,.nexus-app.theme-aurora .performance-stat-card,.nexus-app.theme-aurora .performance-chart-card,.nexus-app.theme-aurora .performance-fps-panel,.nexus-app.theme-aurora .cooling-status-banner,.nexus-app.theme-aurora .cooling-temperature-card,.nexus-app.theme-aurora .cooling-chart-panel,.nexus-app.theme-aurora .cooling-fan-panel,.nexus-app.theme-aurora .cooling-fan-reading,.nexus-app.theme-aurora .storage-device-card,.nexus-app.theme-aurora .cpu-detail-stat,.nexus-app.theme-aurora .cpu-core-card,.nexus-app.theme-aurora .gpu-memory-card,.nexus-app.theme-aurora .quick-card{border-color:rgba(112,193,228,.32);background:linear-gradient(145deg,rgba(22,48,73,.78),rgba(8,21,42,.86));backdrop-filter:blur(16px)}
+.nexus-app.theme-aurora .health-banner{border-color:rgba(35,224,197,.68);background:linear-gradient(110deg,rgba(10,112,117,.58),rgba(17,49,83,.83) 56%,rgba(68,42,121,.66));backdrop-filter:blur(18px);box-shadow:inset 0 1px rgba(255,255,255,.1),0 16px 40px rgba(0,0,0,.25)}
+.nexus-app.theme-aurora .cpu-card{--module:#25e1cb;--module-rgb:37,225,203;border-color:rgba(37,225,203,.56)}
+.nexus-app.theme-aurora .gpu-card{--module:#bd8cff;--module-rgb:189,140,255;border-color:rgba(189,140,255,.62)}
+.nexus-app.theme-aurora .ram-card{--module:#34dfc0;--module-rgb:52,223,192;border-color:rgba(52,223,192,.5)}
+.nexus-app.theme-aurora .storage-card{--module:#a68bff;--module-rgb:166,139,255;border-color:rgba(166,139,255,.58)}
+.nexus-app.theme-aurora .hardware-card{background:linear-gradient(145deg,rgba(var(--module-rgb),.14),rgba(13,35,59,.84) 42%,rgba(7,20,40,.9));box-shadow:0 15px 35px rgba(0,0,0,.23),inset 0 1px rgba(255,255,255,.07),0 0 22px rgba(var(--module-rgb),.065)}
+.nexus-app.theme-aurora .hardware-card .card-icon{color:var(--module);background:rgba(var(--module-rgb),.16);border:1px solid rgba(var(--module-rgb),.38);box-shadow:0 0 18px rgba(var(--module-rgb),.1)}
+.nexus-app.theme-aurora .overview-card-heading{border-bottom-color:rgba(153,197,231,.22)}
+.nexus-app.theme-aurora .overview-card-telemetry{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;gap:12px;min-height:112px}
+.nexus-app.theme-aurora .utilization-ring{width:72px;height:72px;display:grid;place-items:center;border-radius:50%;padding:7px;background:conic-gradient(var(--ring-color) var(--ring-progress),rgba(166,196,224,.19) 0);box-shadow:0 0 18px color-mix(in srgb,var(--ring-color) 22%,transparent)}
+.nexus-app.theme-aurora .utilization-ring>div{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;background:rgba(8,20,39,.96);box-shadow:inset 0 0 12px rgba(255,255,255,.045)}
+.nexus-app.theme-aurora .utilization-ring strong{color:#f0f7ff;font-size:18px;letter-spacing:-.5px}
+.nexus-app.theme-aurora .overview-card-metrics{gap:0;min-width:0}
+.nexus-app.theme-aurora .overview-card-metric{min-height:27px;padding:4px 0;border-bottom:1px solid rgba(155,191,224,.14)}
+.nexus-app.theme-aurora .overview-card-metric:last-child{border-bottom:0}
+.nexus-app.theme-aurora .overview-card-metric>span{color:#c5d7ec;font-size:10px}
+.nexus-app.theme-aurora .overview-card-metric>strong{font-size:12px;line-height:1.25}
+.nexus-app.theme-aurora .overview-trend{height:34px}
+.nexus-app.theme-aurora .overview-card-link{border-color:rgba(var(--module-rgb),.38);color:#e9f3ff;background:rgba(var(--module-rgb),.09)}
+.nexus-app.theme-aurora .overview-card-link b{color:var(--module)}
+.nexus-app.theme-aurora .quick-card{background:linear-gradient(115deg,rgba(13,48,70,.78),rgba(13,28,53,.88));border-color:rgba(48,211,198,.42)}
+.nexus-app.theme-aurora .quick-icon{width:46px;height:46px;border:1px solid rgba(50,221,207,.42);background:rgba(31,198,188,.16);color:#55f1de}
+.nexus-app.theme-aurora .quick-card:nth-child(even){border-color:rgba(177,126,255,.5);background:linear-gradient(115deg,rgba(48,33,79,.74),rgba(17,27,52,.88))}
+.nexus-app.theme-aurora .quick-card:nth-child(even) .quick-icon{border-color:rgba(177,126,255,.55);background:rgba(163,113,255,.18);color:#c49aff}
+.nexus-app.theme-aurora .nav-item.active{border-color:rgba(35,224,197,.5);background:linear-gradient(100deg,rgba(35,224,197,.21),rgba(35,224,197,.055));box-shadow:inset 3px 0 #25e1cb,0 0 23px rgba(35,224,197,.08)}
+@media(max-width:1250px){.nexus-app{grid-template-columns:190px minmax(0,1fr)}.nexus-app .top-hardware-stat{gap:5px;padding:0 7px;font-size:10px}.nexus-app .top-hardware-stat svg{width:17px;height:17px}.nexus-app .titlebar-nexus{padding-right:10px;margin-right:6px}.nexus-app .theme-picker-trigger{min-width:120px}.nexus-app .hardware-card{min-height:300px}}
+@media(max-width:1050px){.nexus-app .top-hardware-stat:nth-child(n+3){display:none}.nexus-app .titlebar-actions{gap:5px}.nexus-app .theme-picker-trigger{min-width:105px}.nexus-app .hardware-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.nexus-app .titlebar-nexus{display:none}.nexus-app .top-hardware-stat{padding:0 6px}.nexus-app .hardware-grid{grid-template-columns:1fr}}
+.nexus-app .performance-stat-card>span{display:flex;align-items:center;gap:9px}
+.nexus-app .performance-stat-card>span svg{width:28px;height:28px;flex:none;padding:5px;border:1px solid color-mix(in srgb,var(--stat-accent) 48%,transparent);border-radius:8px;background:color-mix(in srgb,var(--stat-accent) 16%,transparent);color:var(--stat-accent)}
+.nexus-app .cooling-status-banner>span,.nexus-app .cooling-temperature-card>span{display:flex;align-items:center;gap:9px}
+.nexus-app .cooling-status-banner>span svg,.nexus-app .cooling-temperature-card>span svg{width:28px;height:28px;flex:none;padding:5px;border:1px solid rgba(var(--accent-rgb),.3);border-radius:8px;background:rgba(var(--accent-rgb),.12);color:var(--accent)}
+.nexus-app.theme-aurora .performance-chart-card,.nexus-app.theme-aurora .cooling-chart-panel{background:linear-gradient(145deg,rgba(13,36,61,.8),rgba(6,18,38,.88))}
+.nexus-app.theme-aurora .cooling-temperature-card{border-color:color-mix(in srgb,var(--cooling-color) 48%,rgba(112,193,228,.25));background:linear-gradient(145deg,color-mix(in srgb,var(--cooling-color) 17%,rgba(16,39,64,.88)),rgba(8,20,40,.9))}
+.nexus-app.theme-aurora .performance-stat-card{border-color:color-mix(in srgb,var(--stat-accent) 48%,rgba(112,193,228,.22));background:linear-gradient(145deg,color-mix(in srgb,var(--stat-accent) 17%,rgba(16,39,64,.9)),rgba(8,20,40,.9))}
+.nexus-app.theme-aurora .cpu-detail-panel,.nexus-app.theme-aurora .ram-detail-panel{border-color:rgba(37,225,203,.38);background:linear-gradient(145deg,rgba(15,54,73,.72),rgba(7,20,40,.86))}
+.nexus-app.theme-aurora .gpu-detail-panel{border-color:rgba(189,140,255,.45);background:linear-gradient(145deg,rgba(48,36,79,.76),rgba(8,20,41,.88))}
+.nexus-app.theme-aurora .storage-detail-panel{border-color:rgba(166,139,255,.43);background:linear-gradient(145deg,rgba(43,34,77,.75),rgba(8,20,41,.88))}
+.nexus-app .overview-card-metric>strong.storage-state-good{color:#54e2b0}
+.nexus-app .overview-card-metric>strong.storage-state-warning{color:#ffc46e}
+.nexus-app .overview-card-metric>strong.storage-state-critical{color:#ff758e}
+.nexus-app .overview-card-metric>strong.storage-state-unknown{color:#aab8cf}
+.nexus-app.theme-aurora .storage-state-good{color:#48ebc4}
+.nexus-app .brand{padding-bottom:28px}
+.nexus-app .nexus-wordmark{display:block;width:100%;height:55px;object-fit:contain;object-position:left center}
+.nexus-app .health-banner{grid-template-columns:86px 1px minmax(0,1fr) 1px minmax(200px,.65fr);gap:18px;min-height:112px;padding:13px 18px;border-radius:14px}
+.nexus-app .health-score-ring{width:78px;height:78px;padding:7px}
+.nexus-app .health-score-ring strong{font-size:29px;letter-spacing:-.8px}
+.nexus-app .health-score-ring small{font-size:10px}
+.nexus-app .health-summary{gap:6px}
+.nexus-app .health-summary>span{font-size:10px;letter-spacing:1px}
+.nexus-app .health-status-pill{gap:7px;padding:6px 12px;font-size:16px}
+.nexus-app .health-status-pill i{width:9px;height:9px}
+.nexus-app .health-summary p{font-size:10px;line-height:1.35}
+.nexus-app .health-check-divider{display:block;height:68px}
+.nexus-app .health-status-checks{display:grid;gap:8px;min-width:0}
+.nexus-app .health-status-checks>div{display:flex;align-items:center;gap:9px;min-width:0;color:#dbe9f7;font-size:11px;line-height:1.25}
+.nexus-app .health-check-mark{width:17px;height:17px;flex:none;display:grid;place-items:center;border:1px solid currentColor;border-radius:50%;font-size:11px;font-style:normal}
+.nexus-app .health-check-mark:after{content:"✓"}
+.nexus-app .health-check-mark.good{color:#35e4c8}
+.nexus-app .health-check-mark.warning{color:#ffc36b}
+.nexus-app .health-check-mark.critical{color:#ff718d}
+.nexus-app .health-check-mark.unknown{color:#91a3bb}
+.nexus-app .hardware-card{cursor:pointer}
+.nexus-app .hardware-card:focus-visible{outline:2px solid var(--module);outline-offset:3px}
+.nexus-app .overview-card-heading>div{flex:1}
+.nexus-app .hardware-card-arrow{width:25px;height:25px;flex:none;display:grid;place-items:center;padding:0;border:1px solid rgba(169,198,228,.14);border-radius:50%;background:rgba(255,255,255,.035);color:#dcecff;font-size:19px;line-height:1;cursor:pointer;transition:background .18s,border-color .18s,transform .18s}
+.nexus-app .hardware-card-arrow:hover{border-color:var(--module);background:rgba(var(--module-rgb),.15);transform:translateX(2px)}
+.nexus-app .top-hardware-stats{overflow:hidden}
+.nexus-app .top-hardware-stat{flex:1 1 0;overflow:hidden}
+.nexus-app .top-hardware-stat>svg,.nexus-app .top-hardware-stat>b,.nexus-app .top-hardware-stat>i{flex:none}
+.nexus-app .top-hardware-stat>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:1200px){.nexus-app .top-storage-stat{display:none}}
+@media(max-width:1000px){.nexus-app .health-banner{grid-template-columns:70px 1px minmax(0,1fr);gap:12px}.nexus-app .health-check-divider,.nexus-app .health-status-checks{display:none}.nexus-app .health-score-ring{width:64px;height:64px}.nexus-app .health-score-ring strong{font-size:25px}}
+.health-banner{display:grid;grid-template-columns:142px 1px minmax(0,1fr);align-items:center;gap:28px;min-height:166px;margin-bottom:16px;padding:18px 24px;border:1px solid rgba(var(--accent-rgb),.42);border-radius:16px;background:linear-gradient(112deg,rgba(var(--accent-rgb),.14),rgba(13,24,44,.96) 38%,rgba(18,37,72,.95));box-shadow:inset 0 1px rgba(255,255,255,.06),0 14px 32px rgba(0,0,0,.16)}
+.health-score-ring{width:136px;height:136px;display:grid;place-items:center;border-radius:50%;padding:10px;box-shadow:0 0 26px rgba(var(--accent-rgb),.16)}.health-score-ring>div{width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:2px;border-radius:50%;background:#0c1424}.health-score-ring strong{font-size:46px;letter-spacing:-1.5px}.health-score-ring small{align-self:center;color:#9eb0ca;font-size:13px}.health-banner-divider{width:1px;height:94px;background:rgba(184,205,237,.3)}.health-summary{display:flex;align-items:flex-start;flex-direction:column;gap:10px}.health-summary>span{color:#a6bad5;font-size:12px;font-weight:700;letter-spacing:1.3px}.health-status-pill{display:flex;align-items:center;gap:10px;padding:9px 16px;border:1px solid rgba(78,218,155,.3);border-radius:24px;background:rgba(35,169,112,.17);color:#6fe1aa;font-size:19px}.health-status-pill i{width:11px;height:11px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor}.health-warning .health-status-pill{color:#ffc477;background:rgba(220,151,47,.15);border-color:rgba(255,196,119,.3)}.health-critical .health-status-pill{color:#ff8797;background:rgba(220,68,92,.15);border-color:rgba(255,135,151,.3)}.health-insufficientdata .health-status-pill,.health-pending .health-status-pill{color:#aab8ce;background:rgba(140,158,186,.12);border-color:rgba(170,184,206,.2)}.health-summary p{margin:0;color:#aebed3;font-size:12px}
+.hardware-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.hardware-card{height:auto;min-height:325px;display:flex;align-items:stretch;flex-direction:column;gap:13px;padding:17px 17px 15px;border-radius:14px;background:linear-gradient(145deg,rgba(18,28,46,.98),rgba(10,16,29,.99));box-shadow:0 12px 30px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.035)}.hardware-card:after{right:-110px;top:-145px;opacity:.55}
+.overview-card-heading{position:relative;z-index:1;display:flex;align-items:center;gap:13px;min-width:0;min-height:65px;padding-bottom:13px;border-bottom:1px solid rgba(151,183,230,.17)}.card-icon{width:54px;height:54px;flex:none;display:grid;place-items:center;border-radius:13px;color:var(--accent);background:rgba(var(--accent-rgb),.15)}.card-icon svg{width:30px;height:30px}.gpu-card .card-icon,.ram-card .card-icon,.storage-card .card-icon{color:var(--accent);background:rgba(var(--accent-rgb),.15)}
+.overview-card-heading>div{min-width:0}.overview-card-heading h2{margin:0 0 5px;font-size:19px;line-height:1.2}.overview-card-heading small{display:block;overflow:hidden;color:#9baec8;font-size:11px;line-height:1.45;text-overflow:ellipsis;white-space:nowrap}
+.overview-card-metrics{display:grid;gap:10px;position:relative;z-index:1}.overview-card-metric{display:flex;align-items:center;justify-content:space-between;gap:9px;min-width:0}.overview-card-metric>span{display:flex;align-items:center;gap:8px;color:#c5d4e9;font-size:12px}.overview-card-metric>span svg{width:21px;height:21px;flex:none;color:#89bfff}.overview-card-metric>strong{min-width:0;color:#f0f5ff;font-size:23px;font-weight:750;letter-spacing:-.4px;text-align:right;overflow-wrap:anywhere}
+.overview-trend{display:block;width:100%;height:40px;margin-top:auto;overflow:visible}.overview-trend-empty{display:grid;min-height:40px;margin-top:auto;place-items:center;color:#8192ab;font-size:11px}.overview-progress{height:10px;margin-top:auto;overflow:hidden;border-radius:10px;background:rgba(255,255,255,.09)}.overview-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),rgba(var(--accent-rgb),.58));box-shadow:0 0 12px rgba(var(--accent-rgb),.3)}
+.overview-card-link{align-self:flex-start;padding:8px 11px;border:1px solid rgba(var(--accent-rgb),.25);border-radius:7px;background:rgba(var(--accent-rgb),.06);color:#dbe9ff;font-size:12px;cursor:pointer}.overview-card-link:hover{border-color:var(--accent);color:var(--accent)}.overview-card-link b{margin-left:10px;color:var(--accent)}
+.storage-pager{position:relative;z-index:1;display:flex;align-items:center;gap:8px;min-width:0}.storage-pager button{width:30px;height:30px;border:1px solid rgba(151,183,230,.2);border-radius:8px;background:rgba(255,255,255,.04);color:#e5efff;font-size:19px;cursor:pointer}.storage-pager button:disabled{opacity:.4;cursor:default}.storage-pager span{min-width:45px;color:#c2d1e7;font-size:12px;text-align:center}.storage-pager small{min-width:0;overflow:hidden;margin-left:auto;color:#a8bbd4;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.quick-access{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:15px}.quick-card{height:78px;gap:13px;padding:12px 14px;border-radius:12px}.quick-icon{width:42px;height:42px;flex:none;border-radius:11px}.quick-icon svg{width:24px;height:24px}.quick-card>span:nth-child(2){gap:5px}.quick-card b{font-size:13px}.quick-card small{font-size:10px;line-height:1.4;white-space:normal}.quick-card>i{width:25px;height:25px;font-size:17px}
+.content-footer{font-size:9px;letter-spacing:.7px}.content-footer i{width:8px;height:8px}
+/* Text on the detail pages uses the same comfortable reading scale as the overview. */
+.nexus-app .diagnostics-panel h2,.nexus-app .performance-chart-header h2,.nexus-app .performance-fps-panel h2,.nexus-app .cooling-chart-controls h2,.nexus-app .cooling-fan-panel h2,.nexus-app .cooling-details-header h2{font-size:17px}
+.nexus-app .diagnostics-panel p,.nexus-app .cooling-fan-panel p,.nexus-app .performance-chart-empty{font-size:12px;line-height:1.55}
+.nexus-app .diagnostics-row{gap:14px;padding:13px 5px;font-size:12px;line-height:1.45}.nexus-app .diagnostics-row small{font-size:10px;line-height:1.4}.nexus-app .system-section-label{font-size:11px}
+.nexus-app .performance-stat-card>span,.nexus-app .cooling-status-banner>span,.nexus-app .cooling-temperature-card>span{font-size:11px}.nexus-app .performance-stat-card strong{font-size:28px}.nexus-app .performance-stat-card small,.nexus-app .performance-chart-header small,.nexus-app .performance-fps-panel small{font-size:10px}.nexus-app .performance-chart-header h2,.nexus-app .performance-fps-panel h2{font-size:16px}.nexus-app .performance-legend span{font-size:10px}.nexus-app .performance-axis-label{font-size:11px}
+.nexus-app .cooling-select-control,.nexus-app .cooling-chart-controls small,.nexus-app .cooling-fan-panel header small{font-size:10px}.nexus-app .cooling-select-control select{font-size:12px}.nexus-app .cooling-temperature-card>strong{font-size:25px}.nexus-app .cooling-temperature-card>small,.nexus-app .cooling-status-banner>small{font-size:10px}.nexus-app .cooling-fan-copy>span{font-size:12px}.nexus-app .cooling-fan-copy>small,.nexus-app .cooling-details-header label{font-size:10px}.nexus-app .cooling-fan-rpm{font-size:13px}
+.theme-picker{position:relative;z-index:12;flex:none}.theme-picker-trigger{min-width:156px;height:42px;display:flex;align-items:center;gap:10px;padding:0 12px;border:1px solid rgba(162,188,225,.24);border-radius:10px;background:rgba(16,25,40,.96);color:#e1ebfa;font-size:12px;cursor:pointer}.theme-picker-trigger>i,.theme-picker-menu button>i{width:18px;height:18px;flex:none;border-radius:50%;box-shadow:0 0 8px currentColor}.theme-picker-trigger>span{flex:1;text-align:left}.theme-picker-trigger>b{color:#a8bbd4;font-size:15px}.theme-picker-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:185px;padding:6px;border:1px solid rgba(142,177,226,.36);border-radius:12px;background:#0d1523;box-shadow:0 14px 35px rgba(0,0,0,.48)}.theme-picker-menu button{width:100%;height:42px;display:flex;align-items:center;gap:11px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:#dce6f7;font-size:12px;text-align:left;cursor:pointer}.theme-picker-menu button:hover,.theme-picker-menu button.selected{background:rgba(var(--accent-rgb),.16)}.theme-picker-menu button>b{margin-left:auto;color:var(--accent)}.settings-theme-picker .theme-picker-trigger{min-width:160px}
+@media(max-width:1300px){.nexus-app{grid-template-columns:225px minmax(0,1fr)}.sidebar{padding-left:12px;padding-right:12px}.content{padding:25px 22px}.hardware-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hardware-card{min-height:285px}.quick-access{grid-template-columns:repeat(2,minmax(0,1fr))}.titlebar-product{font-size:14px}}
+@media(max-width:850px){.nexus-app{grid-template-columns:190px minmax(0,1fr);min-width:900px}.titlebar-product,.titlebar-divider{display:none}.titlebar{padding-left:15px}.titlebar-actions{gap:8px}.titlebar-actions .data-mode{display:none}.page-heading h1{font-size:29px}.page-heading p{font-size:12px}.hardware-grid{grid-template-columns:1fr}.hardware-card{min-height:260px}.quick-access{grid-template-columns:1fr}.health-banner{grid-template-columns:95px 1px minmax(0,1fr);gap:16px;padding:14px}.health-score-ring{width:92px;height:92px}.health-score-ring strong{font-size:34px}}
+@media(prefers-reduced-motion:reduce){.theme-picker-trigger,.theme-picker-menu button{transition:none}}
+/* NEXUS UI polish */
+.nexus-app .health-check-mark{width:19px;height:19px;display:inline-grid;place-items:center;flex:none;border:1.5px solid currentColor;border-radius:50%;background:transparent;font-size:12px;font-weight:700;line-height:1}
+.nexus-app .health-check-mark:after{content:none}
+.nexus-app .health-check-mark.good{color:#35e4c8}.nexus-app .health-check-mark.warning{color:#ffc36b}.nexus-app .health-check-mark.critical{color:#ff718d}.nexus-app .health-check-mark.unknown{color:#91a3bb}
+.nexus-app .gpu-memory-panel{padding:8px 13px;margin:6px 0}.nexus-app .gpu-memory-panel .cpu-detail-heading{margin-bottom:3px}.nexus-app .gpu-memory-panel .cpu-detail-heading h2{font-size:13px}.nexus-app .gpu-memory-panel .cpu-detail-heading small{font-size:9px}.nexus-app .gpu-memory-panel .device-memory-track{height:5px;margin:5px 0}.nexus-app .gpu-memory-panel .device-memory-values small{font-size:8px}.nexus-app .gpu-memory-panel .device-memory-values strong{font-size:12px}
+.nexus-app .detail-sensors-toggle{min-height:38px;padding:8px 13px;border-radius:9px;font-size:12px;font-weight:600}.nexus-app .detail-sensors-toggle span{font-size:15px}.nexus-app .storage-device-heading h3{flex:1}
+.nexus-app .cooling-summary-panel{grid-template-columns:minmax(0,1fr);gap:10px}.nexus-app .cooling-status-banner{min-height:74px;display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:18px;padding:12px 18px}.nexus-app .cooling-status-banner>strong{font-size:22px}.nexus-app .cooling-status-banner>small{justify-self:end;text-align:right;font-size:11px}
+.nexus-app .threshold-inputs{gap:18px}.nexus-app .threshold-stepper{gap:6px}.nexus-app .threshold-step-button{width:34px;height:34px;border-radius:10px;background:linear-gradient(145deg,rgba(var(--accent-rgb),.16),rgba(255,255,255,.035));box-shadow:inset 0 1px rgba(255,255,255,.08);font-size:17px}.nexus-app .threshold-value input{width:68px;height:34px;border:1px solid rgba(143,177,222,.24);border-radius:10px;background:rgba(7,13,24,.85);color:#edf5ff;font-size:13px;font-weight:700;text-align:center}.nexus-app .threshold-value label{font-size:10px;letter-spacing:.2px}
+.nexus-app .overview-trend-wrap,.nexus-app .overview-progress-wrap{width:100%;min-height:52px;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;margin-top:auto}.nexus-app .overview-trend{height:36px;margin:0}.nexus-app .overview-trend-wrap>small,.nexus-app .overview-progress-wrap>small{color:#91a5bf;font-size:10px;line-height:1.2;text-align:right}.nexus-app .overview-trend-empty{align-items:center;justify-content:center;color:#91a5bf;font-size:10px}.nexus-app .overview-trend-empty>small{align-self:stretch}.nexus-app .overview-progress-wrap .overview-progress{height:9px;margin:0}
+@media(max-width:1100px){.nexus-app .cooling-status-banner{grid-template-columns:auto auto minmax(0,1fr)}.nexus-app .cooling-status-banner>small{justify-self:end;text-align:right}}
+@media(max-width:700px){.nexus-app .cooling-status-banner{grid-template-columns:auto 1fr}.nexus-app .cooling-status-banner>small{grid-column:1/-1;justify-self:start;text-align:left}}/* Compact top metrics and a clearer theme selector. */
+.nexus-app .top-hardware-stat{gap:6px;padding-left:9px;padding-right:9px}
+.nexus-app .top-stat-value{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nexus-app .top-stat-load{flex:none;white-space:nowrap;color:#b8cce5;font-size:10px;font-variant-numeric:tabular-nums}
+.nexus-app .top-hardware-stat>b{flex:none}
+.nexus-app .theme-picker-trigger{height:40px;min-width:172px;padding:0 11px;border-color:rgba(var(--accent-rgb),.4);background:linear-gradient(145deg,rgba(20,34,54,.96),rgba(12,19,32,.98));box-shadow:inset 0 1px rgba(255,255,255,.07),0 4px 14px rgba(0,0,0,.16);transition:border-color .18s,box-shadow .18s,transform .18s}
+.nexus-app .theme-picker-trigger:hover{border-color:rgba(var(--accent-rgb),.75);box-shadow:inset 0 1px rgba(255,255,255,.09),0 0 16px rgba(var(--accent-rgb),.12);transform:translateY(-1px)}
+.nexus-app .theme-picker-trigger:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.nexus-app .theme-picker-trigger>i{width:16px;height:16px;border:2px solid rgba(255,255,255,.38);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.12),0 0 12px currentColor}
+.nexus-app .theme-picker-trigger>b{width:20px;height:20px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.06);color:#d6e4f5;font-size:13px;transition:transform .18s,background .18s}
+.nexus-app .theme-picker-trigger[aria-expanded="true"]>b{transform:rotate(180deg);background:rgba(var(--accent-rgb),.16)}
+.nexus-app .theme-picker-menu{padding:7px;border-color:rgba(var(--accent-rgb),.35);background:rgba(9,17,30,.98);backdrop-filter:blur(16px)}
+.nexus-app .theme-picker-menu button{border:1px solid transparent;transition:background .16s,border-color .16s}
+.nexus-app .theme-picker-menu button:hover,.nexus-app .theme-picker-menu button.selected{border-color:rgba(var(--accent-rgb),.25);background:rgba(var(--accent-rgb),.12)}
+@media(max-width:1350px){.nexus-app .top-storage-stat{display:none}}
+@media(max-width:1120px){.nexus-app .top-hardware-stat:nth-child(3) .top-stat-load{display:none}}/* Refine the health score and make the recommended thresholds readable. */
+.nexus-app .health-banner{grid-template-columns:86px 1px minmax(0,1fr) minmax(200px,.65fr)}
+.nexus-app .health-score-ring>div{flex-direction:column;gap:0}
+.nexus-app .health-score-ring strong{font-size:29px;line-height:1;letter-spacing:-.8px}
+.nexus-app .health-score-ring small{align-self:center;margin-top:3px;font-size:9px;line-height:1}
+.nexus-app .settings-recommended-row small,.nexus-app .settings-recommended-row .recommended-values{color:#bdcde2;font-size:12px;line-height:1.45}
+.nexus-app .settings-recommended-row .recommended-values{font-weight:500}
+@media(max-width:1000px){.nexus-app .health-banner{grid-template-columns:70px 1px minmax(0,1fr)}}/* Final refinements to the theme picker and compact settings copy. */
+.nexus-app .theme-picker-trigger{height:42px;min-width:188px;gap:11px;padding:0 12px;border-color:rgba(104,165,200,.28);border-radius:11px;background:linear-gradient(135deg,rgba(13,25,42,.98),rgba(10,17,29,.98));box-shadow:inset 0 1px rgba(255,255,255,.055),0 5px 16px rgba(0,0,0,.18);font-size:11px;letter-spacing:.25px}
+.nexus-app .theme-picker-trigger:hover{border-color:rgba(var(--accent-rgb),.62);box-shadow:inset 0 1px rgba(255,255,255,.08),0 0 13px rgba(var(--accent-rgb),.1);transform:none}
+.nexus-app .theme-picker-trigger>i{width:14px;height:14px;border:0;box-shadow:0 0 0 3px rgba(var(--accent-rgb),.1),0 0 9px currentColor}
+.nexus-app .theme-picker-trigger>b{width:16px;height:16px;position:relative;border-radius:0;background:transparent;font-size:0;transform:none}
+.nexus-app .theme-picker-trigger>b:after{content:"";width:6px;height:6px;display:block;border-right:1.7px solid #9eb3ce;border-bottom:1.7px solid #9eb3ce;transform:rotate(45deg);margin-top:-3px;transition:transform .18s,border-color .18s}
+.nexus-app .theme-picker-trigger[aria-expanded="true"]>b{background:transparent;transform:none}
+.nexus-app .theme-picker-trigger[aria-expanded="true"]>b:after{transform:rotate(225deg);margin-top:3px;border-color:var(--accent)}
+.nexus-app .theme-picker-menu button>i{width:14px;height:14px;box-shadow:0 0 7px currentColor}
+.nexus-app .settings-recommended-values{color:#cfdded;font-size:12px;font-weight:500;line-height:1.5}
+.nexus-app .settings-recommendation-row .settings-secondary-button{min-height:34px;padding:7px 12px;font-size:11px}
+.nexus-app .settings-actions small{color:#a9bad0;font-size:11px;line-height:1.5}/* Keep all four hardware groups visible in a compact title bar. */
+@media(max-width:1350px){.nexus-app .top-storage-stat{display:flex}}
+@media(max-width:1200px){.nexus-app .top-hardware-stat{gap:4px;padding-left:5px;padding-right:5px;font-size:9px}.nexus-app .top-hardware-stat svg{width:15px;height:15px}.nexus-app .top-hardware-stat>b{font-size:9px}.nexus-app .top-stat-value{font-size:9px}.nexus-app .top-stat-load{display:none}.nexus-app .titlebar-actions{gap:5px}.nexus-app .theme-picker-trigger{min-width:110px;padding:0 8px;font-size:9px}}
+@media(max-width:1050px){.nexus-app .top-hardware-stat:nth-child(n+3){display:flex}.nexus-app .top-hardware-stat{gap:3px;padding-left:3px;padding-right:3px}.nexus-app .top-hardware-stat svg{width:14px;height:14px}}
+.nexus-app .settings-secondary-button,.nexus-app .settings-save-button{min-height:42px;padding:10px 14px;border-radius:9px;font-size:12px;font-weight:600}
+.nexus-app .settings-recommendation-row .settings-secondary-button{min-height:42px;padding:10px 14px;font-size:12px}
+.nexus-app .settings-secondary-button:focus-visible,.nexus-app .settings-save-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}/* Fixed equal-width cells stop the live values from shifting the title bar. */
+.nexus-app .top-hardware-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;min-width:0;overflow:hidden}
+.nexus-app .top-hardware-stat{width:100%;min-width:0;display:flex;justify-content:flex-start;overflow:hidden;font-variant-numeric:tabular-nums}
+.nexus-app .top-hardware-stat .top-stat-value,.nexus-app .top-hardware-stat .top-stat-load{font-variant-numeric:tabular-nums}
+.nexus-app .top-hardware-stat .top-stat-load{min-width:3ch;text-align:right}
+@media(max-width:1200px){.nexus-app .top-hardware-stat .top-stat-load{display:none}}/* Match overview trends and fill bars to each module's accent color. */
+.nexus-app .cpu-card,.nexus-app .ram-card{--overview-accent:#25e1cb}
+.nexus-app .gpu-card,.nexus-app .storage-card{--overview-accent:#ad89ff}
+.nexus-app .gpu-card .overview-trend path:nth-child(1){fill:#ad89ff}
+.nexus-app .gpu-card .overview-trend path:nth-child(2){stroke:#ad89ff}
+.nexus-app .ram-card .overview-progress i{background:linear-gradient(90deg,#25e1cb,rgba(37,225,203,.58));box-shadow:0 0 12px rgba(37,225,203,.3)}
+.nexus-app .storage-card .overview-progress i{background:linear-gradient(90deg,#ad89ff,rgba(173,137,255,.58));box-shadow:0 0 12px rgba(173,137,255,.3)}/* Guardian alert count, clear status colors, and per-alert guidance. */
+.nexus-app .guardian-alert-ring{width:78px;height:78px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;border:2px solid currentColor;border-radius:50%;background:rgba(8,18,31,.7);box-shadow:0 0 22px color-mix(in srgb,currentColor 18%,transparent);font-variant-numeric:tabular-nums}
+.nexus-app .guardian-alert-ring strong{font-size:27px;line-height:1;letter-spacing:-.7px}.nexus-app .guardian-alert-ring small{font-size:7px;font-weight:800;letter-spacing:.45px;white-space:nowrap}
+.nexus-app .guardian-alert-good{color:#35e4c8}.nexus-app .guardian-alert-warning{color:#ffc36b}.nexus-app .guardian-alert-critical{color:#ff718d}.nexus-app .guardian-alert-unknown{color:#91a3bb}
+.nexus-app .guardian-event-list{display:grid;gap:10px}.nexus-app .guardian-event-card{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:13px;border:1px solid rgba(125,157,208,.16);border-radius:10px;background:rgba(8,16,29,.28)}
+.nexus-app .guardian-event-card>header{display:flex;align-items:center;gap:12px;min-width:0}.nexus-app .guardian-event-card>header>b{flex:1;min-width:0;color:#e6eefb;font-size:13px;line-height:1.4;overflow-wrap:anywhere}.nexus-app .guardian-event-card>header>span{font-size:12px;font-weight:700;white-space:nowrap}
+.nexus-app .guardian-event-card.alert-critical>header>span{color:#ff8797}.nexus-app .guardian-event-card.alert-warning>header>span{color:#ffbd72}.nexus-app .guardian-event-card>header>small{padding:4px 8px;border:1px solid rgba(150,174,208,.18);border-radius:20px;color:#aabbd3;font-size:10px;white-space:nowrap}
+.nexus-app .guardian-event-message{margin:0;color:#aebed3;font-size:12px;line-height:1.45}.nexus-app .guardian-guidance{border-top:1px solid rgba(255,255,255,.07);padding-top:8px}.nexus-app .guardian-guidance>summary{width:max-content;max-width:100%;padding:5px 0;color:#8edfd7;font-size:12px;font-weight:600;cursor:pointer;user-select:none;list-style-position:inside}.nexus-app .guardian-guidance>p{margin:6px 0 2px;padding:10px 12px;border-left:2px solid rgba(37,225,203,.5);border-radius:0 7px 7px 0;background:rgba(37,225,203,.055);color:#c2d2e6;font-size:12px;line-height:1.55}
+@media(max-width:1000px){.nexus-app .guardian-alert-ring{width:64px;height:64px}.nexus-app .guardian-alert-ring strong{font-size:23px}}
+/* Keep expanded storage sensor details from stretching the other drive cards. */
+.nexus-app .storage-device-grid{align-items:start}.nexus-app .storage-device-card{align-self:start;height:max-content}.nexus-app .storage-sensor-details>summary{padding:5px 0;user-select:none;line-height:1.4}
+@media(min-width:1351px){.nexus-app .top-hardware-stats{grid-template-columns:repeat(4,160px);width:640px;max-width:100%;flex:0 1 640px;justify-content:start}.nexus-app .top-hardware-stat{width:160px;max-width:160px}}
+/* Give every color preset the same Aurora glass and background treatment. */
+.nexus-app:not(.theme-aurora){background:#07101e}
+.nexus-app:not(.theme-aurora) .sidebar{background:rgba(5,11,24,.88);border-right-color:rgba(84,197,235,.2);backdrop-filter:blur(18px)}
+.nexus-app:not(.theme-aurora) .titlebar{background:rgba(7,13,27,.78);border-bottom-color:rgba(84,197,235,.2);backdrop-filter:blur(18px)}
+.nexus-app:not(.theme-aurora) .hardware-card,.nexus-app:not(.theme-aurora) .diagnostics-panel,.nexus-app:not(.theme-aurora) .performance-stat-card,.nexus-app:not(.theme-aurora) .performance-chart-card,.nexus-app:not(.theme-aurora) .performance-fps-panel,.nexus-app:not(.theme-aurora) .cooling-status-banner,.nexus-app:not(.theme-aurora) .cooling-temperature-card,.nexus-app:not(.theme-aurora) .cooling-chart-panel,.nexus-app:not(.theme-aurora) .cooling-fan-panel,.nexus-app:not(.theme-aurora) .cooling-fan-reading,.nexus-app:not(.theme-aurora) .storage-device-card,.nexus-app:not(.theme-aurora) .cpu-detail-stat,.nexus-app:not(.theme-aurora) .cpu-core-card,.nexus-app:not(.theme-aurora) .gpu-memory-card,.nexus-app:not(.theme-aurora) .quick-card{border-color:rgba(105,194,235,.28);background:linear-gradient(145deg,rgba(19,37,62,.86),rgba(8,20,39,.91));backdrop-filter:blur(14px)}
+.nexus-app:not(.theme-aurora) .health-banner{border-color:rgba(var(--accent-rgb),.52);background:linear-gradient(110deg,rgba(var(--accent-rgb),.3),rgba(22,45,81,.88) 54%,rgba(61,39,111,.42));backdrop-filter:blur(18px)}
+.nexus-app:not(.theme-aurora) .hardware-card{background:linear-gradient(145deg,color-mix(in srgb,var(--overview-accent) 14%,rgba(13,35,59,.84)),rgba(7,20,40,.9));box-shadow:0 15px 35px rgba(0,0,0,.23),inset 0 1px rgba(255,255,255,.07),0 0 22px color-mix(in srgb,var(--overview-accent) 7%,transparent)}
+.nexus-app:not(.theme-aurora) .card-icon,.nexus-app:not(.theme-aurora) .quick-icon,.nexus-app:not(.theme-aurora) .storage-device-icon{color:var(--overview-accent,var(--accent));background:color-mix(in srgb,var(--overview-accent,var(--accent)) 16%,transparent);border:1px solid color-mix(in srgb,var(--overview-accent,var(--accent)) 38%,transparent)}
+.nexus-app .performance-fps-copy{min-width:0;display:flex;flex-direction:column;gap:8px;flex:1}.nexus-app .performance-fps-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.nexus-app .performance-fps-controls select,.nexus-app .performance-fps-controls button{min-height:38px;padding:8px 12px;border:1px solid rgba(var(--accent-rgb),.32);border-radius:8px;background:rgba(7,16,31,.76);color:#d8e5f7;font-size:12px}.nexus-app .performance-fps-controls select{min-width:260px;max-width:min(520px,100%)}.nexus-app .performance-fps-controls button{cursor:pointer}.nexus-app .performance-fps-controls button:hover:not(:disabled){border-color:var(--accent);background:rgba(var(--accent-rgb),.12)}.nexus-app .performance-fps-controls button:disabled{opacity:.5;cursor:not-allowed}.nexus-app .performance-fps-note{max-width:900px;line-height:1.45;color:#899ab2}.nexus-app .performance-fps-error{color:#ff8797}.nexus-app .performance-fps-value{min-width:110px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px}.nexus-app .performance-fps-value strong{font-size:34px;font-variant-numeric:tabular-nums}.nexus-app .performance-fps-value>span{color:var(--accent);font-size:11px;font-weight:800;letter-spacing:1px}.nexus-app .performance-fps-value small{white-space:nowrap}
+.nexus-app .performance-fps-session-stats{display:grid;grid-template-columns:repeat(3,minmax(90px,1fr));align-items:center;gap:9px;min-width:310px}.nexus-app .performance-fps-session-stats>div{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border:1px solid rgba(var(--accent-rgb),.18);border-radius:8px;background:rgba(7,16,31,.42)}.nexus-app .performance-fps-session-stats span{color:#91a1bb;font-size:10px}.nexus-app .performance-fps-session-stats strong{color:#e8f0ff;font-size:15px;font-variant-numeric:tabular-nums}.nexus-app .performance-overlay-open{grid-column:1/-1;justify-self:end;min-height:34px;padding:7px 11px;border:1px solid rgba(var(--accent-rgb),.35);border-radius:8px;background:rgba(var(--accent-rgb),.1);color:#deebff;font-size:11px;cursor:pointer}.nexus-app .performance-overlay-open:disabled{opacity:.48;cursor:not-allowed}
+/* Each palette keeps the shared Aurora glass layout with its own atmosphere. */
+.nexus-app.theme-blue{background:radial-gradient(ellipse at 14% 12%,rgba(32,111,222,.38),transparent 36%),radial-gradient(ellipse at 82% 78%,rgba(13,94,152,.24),transparent 38%),linear-gradient(145deg,#050b18,#081326 56%,#060a13)}
+.nexus-app.theme-purple{background:radial-gradient(ellipse at 78% 12%,rgba(126,65,204,.38),transparent 38%),radial-gradient(ellipse at 12% 84%,rgba(46,50,143,.28),transparent 40%),linear-gradient(145deg,#090716,#10102a 55%,#080a15)}
+.nexus-app.theme-green{background:radial-gradient(ellipse at 16% 20%,rgba(31,155,111,.3),transparent 38%),radial-gradient(ellipse at 85% 82%,rgba(28,115,91,.25),transparent 40%),linear-gradient(145deg,#06120f,#0b211c 56%,#070f12)}
+.nexus-app.theme-red{background:radial-gradient(ellipse at 82% 16%,rgba(199,52,81,.34),transparent 37%),radial-gradient(ellipse at 18% 82%,rgba(104,34,67,.24),transparent 40%),linear-gradient(145deg,#13080e,#24101a 56%,#0b0a12)}
+.nexus-app.theme-rose{background:radial-gradient(ellipse at 78% 10%,rgba(189,61,109,.38),transparent 40%),radial-gradient(ellipse at 12% 85%,rgba(90,50,135,.28),transparent 40%),linear-gradient(145deg,#150b18,#251226 56%,#0b0b16)}
+.nexus-app.theme-ice{background:radial-gradient(ellipse at 18% 16%,rgba(54,143,190,.32),transparent 40%),radial-gradient(ellipse at 84% 78%,rgba(63,96,178,.24),transparent 40%),linear-gradient(145deg,#06121c,#102334 56%,#080d19)}
+.nexus-app.theme-aurora{background:linear-gradient(180deg,rgba(5,11,25,.68),rgba(5,11,25,.9)),url('./assets/aurora-bg.png') center 44%/cover fixed,#07101e}
+.nexus-app.theme-blue .health-banner,.nexus-app.theme-purple .health-banner,.nexus-app.theme-green .health-banner,.nexus-app.theme-red .health-banner,.nexus-app.theme-rose .health-banner,.nexus-app.theme-ice .health-banner{border-color:rgba(var(--accent-rgb),.52);background:linear-gradient(110deg,rgba(var(--accent-rgb),.27),rgba(22,45,81,.78) 54%,rgba(61,39,111,.38));backdrop-filter:blur(18px)}
+/* The overview cards use the same glass surfaces as the Aurora design in every palette. */
+.nexus-app .overview-card-heading{border-bottom-color:rgba(153,197,231,.22)}
+.nexus-app .overview-card-telemetry{min-height:112px}
+.nexus-app .overview-card-metric{border-bottom-color:rgba(155,191,224,.14)}
+.nexus-app .overview-trend{filter:drop-shadow(0 0 6px color-mix(in srgb,var(--overview-accent) 28%,transparent))}
+/* Dedicated transparent, always-on-top gameplay readout. */
+html.fps-overlay-document,body.fps-overlay-document,#root.fps-overlay-document{width:100%;height:100%;min-width:0;min-height:0;margin:0;overflow:hidden;background:transparent!important}
+.fps-overlay-root{width:100vw;height:100vh;min-width:0;min-height:0;padding:6px;background:transparent;color:#f1f7ff;font-family:Inter,"Segoe UI",sans-serif;--fps-accent:#22e0c5}
+.fps-overlay-card{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;border:1px solid color-mix(in srgb,var(--fps-accent) 60%,rgba(150,185,225,.25));border-radius:12px;background:linear-gradient(135deg,rgba(6,15,27,.94),rgba(9,20,38,.86));box-shadow:0 8px 28px rgba(0,0,0,.38),0 0 22px color-mix(in srgb,var(--fps-accent) 14%,transparent);backdrop-filter:blur(16px)}
+.fps-overlay-header{height:34px;min-height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 9px 0 12px;border-bottom:1px solid rgba(165,198,233,.16);background:color-mix(in srgb,var(--fps-accent) 9%,rgba(7,16,31,.6))}
+.fps-overlay-brand{display:flex;align-items:center;gap:8px;min-width:0;color:#e5f0ff;font-size:11px;font-weight:800;letter-spacing:1.1px;cursor:move}.fps-overlay-brand i{width:7px;height:7px;border-radius:50%;background:var(--fps-accent);box-shadow:0 0 10px var(--fps-accent)}.fps-overlay-brand span{color:var(--fps-accent);font-size:9px}.fps-overlay-brand small{max-width:130px;overflow:hidden;color:#8da0bb;font-size:10px;font-weight:500;letter-spacing:0;text-overflow:ellipsis;white-space:nowrap}
+.fps-overlay-header button{width:25px;height:25px;border:0;border-radius:6px;background:transparent;color:#aabbd2;font-size:20px;line-height:1;cursor:pointer}.fps-overlay-header button:hover{background:rgba(255,90,120,.16);color:#ff8da2}
+.fps-overlay-metrics{flex:1;display:grid;grid-template-columns:1.2fr 1fr 1fr 1.25fr;align-items:center;gap:4px;padding:8px 10px}.fps-overlay-metrics article{min-width:0;display:flex;align-items:center;flex-direction:column;gap:2px}.fps-overlay-metrics article strong{color:#e8f2ff;font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}.fps-overlay-metrics article span{color:#91a5c0;font-size:8px;font-weight:800;letter-spacing:.65px;white-space:nowrap}.fps-overlay-metrics .fps-overlay-current strong{color:var(--fps-accent);font-size:31px;line-height:1}.fps-overlay-metrics .fps-overlay-current span{color:var(--fps-accent)}.fps-overlay-metrics article strong small{font-size:11px;color:#9aadc7}
+.fps-overlay-card footer{min-height:22px;padding:4px 10px 6px;border-top:1px solid rgba(165,198,233,.1);overflow:hidden;color:#9aaec7;font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:390px){.fps-overlay-brand small{display:none}.fps-overlay-metrics article strong{font-size:17px}.fps-overlay-metrics .fps-overlay-current strong{font-size:27px}}
+
+/* Individual color worlds; Aurora intentionally keeps its existing image background. */
+.nexus-app.theme-blue{--theme-surface-a:rgba(12,42,77,.88);--theme-surface-b:rgba(6,17,37,.94);--theme-edge:80,180,250}
+.nexus-app.theme-purple{--theme-surface-a:rgba(42,26,83,.88);--theme-surface-b:rgba(13,12,42,.95);--theme-edge:178,127,255}
+.nexus-app.theme-green{--theme-surface-a:rgba(12,62,51,.88);--theme-surface-b:rgba(6,29,28,.95);--theme-edge:64,227,170}
+.nexus-app.theme-red{--theme-surface-a:rgba(82,25,43,.88);--theme-surface-b:rgba(38,10,21,.95);--theme-edge:255,104,128}
+.nexus-app.theme-rose{--theme-surface-a:rgba(70,29,70,.88);--theme-surface-b:rgba(27,12,38,.95);--theme-edge:255,117,170}
+.nexus-app.theme-ice{--theme-surface-a:rgba(17,66,91,.88);--theme-surface-b:rgba(7,28,49,.95);--theme-edge:126,220,255}
+.nexus-app:not(.theme-aurora) .sidebar{background:linear-gradient(180deg,color-mix(in srgb,var(--theme-surface-a) 75%,#050a15),rgba(4,10,21,.9));border-right-color:rgba(var(--theme-edge),.24)}
+.nexus-app:not(.theme-aurora) .titlebar{background:linear-gradient(90deg,rgba(5,12,25,.9),color-mix(in srgb,var(--theme-surface-a) 65%,rgba(5,11,24,.84)));border-bottom-color:rgba(var(--theme-edge),.22)}
+.nexus-app:not(.theme-aurora) .hardware-card,.nexus-app:not(.theme-aurora) .diagnostics-panel,.nexus-app:not(.theme-aurora) .performance-stat-card,.nexus-app:not(.theme-aurora) .performance-chart-card,.nexus-app:not(.theme-aurora) .performance-fps-panel,.nexus-app:not(.theme-aurora) .cooling-status-banner,.nexus-app:not(.theme-aurora) .cooling-temperature-card,.nexus-app:not(.theme-aurora) .cooling-chart-panel,.nexus-app:not(.theme-aurora) .cooling-fan-panel,.nexus-app:not(.theme-aurora) .cooling-fan-reading,.nexus-app:not(.theme-aurora) .storage-device-card,.nexus-app:not(.theme-aurora) .cpu-detail-stat,.nexus-app:not(.theme-aurora) .cpu-core-card,.nexus-app:not(.theme-aurora) .gpu-memory-card,.nexus-app:not(.theme-aurora) .quick-card{border-color:rgba(var(--theme-edge),.28);background:linear-gradient(145deg,var(--theme-surface-a),var(--theme-surface-b));box-shadow:inset 0 1px rgba(255,255,255,.055),0 13px 30px rgba(0,0,0,.2);backdrop-filter:blur(16px)}
+.nexus-app .performance-fps-autostart{display:flex;align-items:center;flex-wrap:wrap;gap:8px;color:#d9e6f6;font-size:12px;font-weight:700;cursor:pointer}.nexus-app .performance-fps-autostart input{width:17px;height:17px;accent-color:var(--accent);cursor:pointer}.nexus-app .performance-fps-autostart small{flex-basis:100%;padding-left:25px;color:#91a1ba;font-weight:400;line-height:1.4}
+.nexus-app.has-custom-background{background-image:linear-gradient(135deg,rgba(4,10,20,.76),rgba(7,14,28,.5)),var(--nexus-user-background)!important;background-position:center;background-size:cover;background-attachment:fixed}
+.nexus-app .settings-extra-section{margin:15px 0 4px;padding:14px;border:1px solid rgba(var(--accent-rgb),.24);border-radius:12px;background:linear-gradient(125deg,rgba(var(--accent-rgb),.09),rgba(8,18,34,.45));box-shadow:inset 0 1px rgba(255,255,255,.045)}
+.nexus-app .settings-extra-heading{display:flex;align-items:center;gap:10px}.nexus-app .settings-extra-heading>svg{width:30px;height:30px;padding:6px;border:1px solid rgba(var(--accent-rgb),.42);border-radius:9px;color:var(--accent);background:rgba(var(--accent-rgb),.11)}.nexus-app .settings-extra-heading b,.nexus-app .settings-tools-heading b{display:block;color:#edf4ff;font-size:14px}.nexus-app .settings-extra-heading small,.nexus-app .settings-tools-heading small{display:block;margin-top:3px;color:#9cb0cb;font-size:11px;line-height:1.35}
+.nexus-app .settings-extra-grid,.nexus-app .settings-tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:13px}.nexus-app .settings-extra-card,.nexus-app .settings-tool-grid article{display:flex;min-height:130px;flex-direction:column;align-items:flex-start;gap:9px;padding:13px;border:1px solid rgba(154,190,230,.16);border-radius:10px;background:rgba(5,14,28,.42)}.nexus-app .settings-extra-card>b,.nexus-app .settings-tool-grid b{font-size:13px;color:#eaf2ff}.nexus-app .settings-extra-card small,.nexus-app .settings-tool-grid small{flex:1;color:#a0b2ca;font-size:11px;line-height:1.45}.nexus-app .settings-extra-card>div{display:flex;flex-wrap:wrap;gap:8px}.nexus-app .settings-extra-card em{color:var(--accent);font-size:10px;font-style:normal}.nexus-app .file-picker-button{position:relative;overflow:hidden}.nexus-app .file-picker-button input{position:absolute;inset:0;opacity:0;cursor:pointer}.nexus-app .settings-tools-heading{margin:17px 1px 0;padding-top:14px;border-top:1px solid rgba(157,192,232,.14)}.nexus-app .settings-tool-grid article{min-height:146px}.nexus-app .settings-tool-grid button{margin-top:auto}

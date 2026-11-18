@@ -24,8 +24,18 @@ public static class WindowsSystemInfoReader
         var version = string.Join(" · ", new[] { displayVersion, build }.Where(value => !string.IsNullOrWhiteSpace(value)));
         if (string.IsNullOrWhiteSpace(version)) version = RuntimeInformation.OSDescription;
 
-        var manufacturer = ReadRegistryValue(BiosInfoKey, "SystemManufacturer");
-        var model = ReadRegistryValue(BiosInfoKey, "SystemProductName");
+        var manufacturer = ReadRegistryValue(BiosInfoKey, "SystemManufacturer") ?? ReadWmiValue("Win32_ComputerSystem", "Manufacturer");
+        var model = ReadRegistryValue(BiosInfoKey, "SystemProductName") ?? ReadWmiValue("Win32_ComputerSystem", "Model");
+        var modelSource = model is null ? null : "BIOS rendszeradat";
+        if (model is null)
+        {
+            var board = ReadRegistryValue(BiosInfoKey, "BaseBoardProduct") ?? ReadWmiValue("Win32_BaseBoard", "Product");
+            if (board is not null)
+            {
+                model = board;
+                modelSource = "Alaplapmodell · a gép típusa nincs megadva";
+            }
+        }
         var osBitness = Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit";
         var processorArchitecture = RuntimeInformation.ProcessArchitecture switch
         {
@@ -37,7 +47,7 @@ public static class WindowsSystemInfoReader
         };
         var systemType = $"{osBitness} operating system, {processorArchitecture}-based processor";
 
-        return new WindowsSystemInfo(edition, version, manufacturer, model, systemType, ReadUsableMemoryGb(), ReadIsActivated());
+        return new WindowsSystemInfo(edition, version, manufacturer, model, systemType, ReadUsableMemoryGb(), ReadIsActivated(), modelSource);
     }
 
     public static string? ResolveWindowsEdition(string? registryProductName, string? buildNumber)
@@ -98,6 +108,28 @@ public static class WindowsSystemInfoReader
         {
             return null;
         }
+    }
+
+    private static string? ReadWmiValue(string className, string propertyName)
+    {
+        if (!OperatingSystem.IsWindows()) return null;
+        try
+        {
+            using var searcher = new ManagementObjectSearcher($"SELECT {propertyName} FROM {className}");
+            using var results = searcher.Get();
+            foreach (ManagementObject result in results)
+            {
+                var value = result[propertyName]?.ToString()?.Trim();
+                if (!string.IsNullOrWhiteSpace(value) &&
+                    !value.Contains("to be filled", StringComparison.OrdinalIgnoreCase) &&
+                    !value.Equals("default string", StringComparison.OrdinalIgnoreCase)) return value;
+            }
+        }
+        catch
+        {
+            return null;
+        }
+        return null;
     }
 
     private static double? ReadUsableMemoryGb()

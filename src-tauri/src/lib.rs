@@ -1,14 +1,13 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{
-    collections::HashMap,
+    collections::VecDeque,
     env, fs,
     io::{BufRead, BufReader, Write},
     path::PathBuf,
     process::{Child, ChildStdin, Command, Stdio},
     sync::{
-        atomic::{AtomicBool, AtomicU64, Ordering},
-        mpsc::{self, SyncSender},
+        atomic::{AtomicBool, Ordering},
         Arc, Mutex,
     },
     thread,
@@ -99,8 +98,6 @@ struct EngineState {
     stdin: Mutex<Option<ChildStdin>>,
     latest: Arc<Mutex<Option<Value>>>,
     running: Arc<AtomicBool>,
-    pending_controls: Arc<Mutex<HashMap<u64, SyncSender<Result<String, String>>>>>,
-    next_control_id: AtomicU64,
 }
 
 impl Default for EngineState {
@@ -110,8 +107,272 @@ impl Default for EngineState {
             stdin: Mutex::new(None),
             latest: Arc::new(Mutex::new(None)),
             running: Arc::new(AtomicBool::new(false)),
-            pending_controls: Arc::new(Mutex::new(HashMap::new())),
-            next_control_id: AtomicU64::new(1),
+        }
+    }
+}
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct GameProcess {
+    process_id: u32,
+    process_name: String,
+}
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct GameFpsStatus {
+    is_running: bool,
+    process_id: Option<u32>,
+    process_name: Option<String>,
+    fps: Option<f64>,
+    average_fps: Option<f64>,
+    one_percent_low_fps: Option<f64>,
+    frame_time_ms: Option<f64>,
+    message: String,
+}
+
+impl Default for GameFpsStatus {
+    fn default() -> Self {
+        Self {
+            is_running: false,
+            process_id: None,
+            process_name: None,
+            fps: None,
+            average_fps: None,
+            one_percent_low_fps: None,
+            frame_time_ms: None,
+            message: "Válassz ki egy futó játékot a méréshez.".into(),
+        }
+    }
+}
+
+struct FpsState {
+    child: Mutex<Option<Child>>,
+    latest: Arc<Mutex<GameFpsStatus>>,
+}
+
+impl Default for FpsState {
+    fn default() -> Self {
+        Self {
+            child: Mutex::new(None),
+            latest: Arc::new(Mutex::new(GameFpsStatus::default())),
+        }
+    }
+}
+
+#[cfg(windows)]
+mod process_list {
+    use super::GameProcess;
+    use std::{ffi::c_void, mem::size_of, os::windows::ffi::OsStringExt};
+
+    const TH32CS_SNAPPROCESS: u32 = 0x00000002;
+    const INVALID_HANDLE_VALUE: *mut c_void = -1isize as *mut c_void;
+    const MAX_PATH: usize = 260;
+
+    #[repr(C)]
+    struct ProcessEntry32W {
+        size: u32,
+        usage: u32,
+        process_id: u32,
+        default_heap_id: usize,
+        module_id: u32,
+        threads: u32,
+        parent_process_id: u32,
+        base_priority: i32,
+        flags: u32,
+        exe_file: [u16; MAX_PATH],
+    }
+
+    #[link(name = "kernel32")]
+    unsafe extern "system" {
+        fn CreateToolhelp32Snapshot(flags: u32, process_id: u32) -> *mut c_void;
+        fn Process32FirstW(snapshot: *mut c_void, entry: *mut ProcessEntry32W) -> i32;
+        fn Process32NextW(snapshot: *mut c_void, entry: *mut ProcessEntry32W) -> i32;
+        fn CloseHandle(handle: *mut c_void) -> i32;
+    }
+
+    pub fn read() -> Result<Vec<GameProcess>, String> {
+        unsafe {
+            let snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+            if snapshot == INVALID_HANDLE_VALUE {
+                return Err("A futó folyamatok listája nem olvasható.".into());
+            }
+
+            let mut entry: ProcessEntry32W = std::mem::zeroed();
+            entry.size = size_of::<ProcessEntry32W>() as u32;
+            let mut processes = Vec::new();
+            let mut ok = Process32FirstW(snapshot, &mut entry) != 0;
+            while ok {
+                let end = entry.exe_file.iter().position(|unit| *unit == 0).unwrap_or(MAX_PATH);
+                let name = std::ffi::OsString::from_wide(&entry.exe_file[..end]).to_string_lossy().into_owned();
+                if entry.process_id > 4 && !name.is_empty() && !name.eq_ignore_ascii_case("NEXUS.exe") {
+                    processes.push(GameProcess { process_id: entry.process_id, process_name: name });
+                }
+                ok = Process32NextW(snapshot, &mut entry) != 0;
+            }
+            CloseHandle(snapshot);
+            processes.sort_by(|left, right| left.process_name.to_lowercase().cmp(&right.process_name.to_lowercase()));
+            Ok(processes)
+        }
+    }
+}
+
+#[tauri::command]
+fn get_running_games() -> Result<Vec<GameProcess>, String> {
+    #[cfg(windows)]
+    { process_list::read() }
+    #[cfg(not(windows))]
+    { Err("A játékfolyamat-lista csak Windowson érhető el.".into()) }
+}
+
+#[tauri::command]
+fn get_game_fps_status(state: State<'_, FpsState>) -> GameFpsStatus {
+    state.latest.lock().map(|status| status.clone()).unwrap_or_default()
+}
+
+#[tauri::command]
+fn start_game_fps(app: tauri::AppHandle, state: State<'_, FpsState>, process_id: u32) -> Result<(), String> {
+    stop_fps_inner(&state);
+    let process = get_running_games()?.into_iter().find(|item| item.process_id == process_id)
+        .ok_or_else(|| "A kiválasztott játék már nem fut. Frissítsd a listát.".to_string())?;
+
+    let bundled = app.path().resource_dir().ok().map(|root| root.join("presentmon").join("PresentMon.exe"));
+    let executable = bundled.filter(|path| path.is_file()).unwrap_or_else(|| {
+        std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("resources").join("presentmon").join("PresentMon.exe")
+    });
+    if !executable.is_file() {
+        return Err("A beépített FPS mérő nem található a telepítésben.".into());
+    }
+
+    let mut command = Command::new(executable);
+    command.args(["--process_id", &process_id.to_string(), "--output_stdout", "--v1_metrics", "--no_console_stats", "--terminate_on_proc_exit"])
+        .stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::piped());
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        command.creation_flags(0x08000000);
+    }
+    let mut child = command.spawn().map_err(|error| format!("Az FPS mérő nem indult el: {error}"))?;
+    let stdout = child.stdout.take().ok_or_else(|| "Az FPS mérő kimenete nem érhető el.".to_string())?;
+    let stderr = child.stderr.take().ok_or_else(|| "Az FPS mérő hibaüzenete nem érhető el.".to_string())?;
+    let latest = Arc::clone(&state.latest);
+    *latest.lock().map_err(|error| error.to_string())? = GameFpsStatus {
+        is_running: true,
+        process_id: Some(process_id),
+        process_name: Some(process.process_name.clone()),
+        fps: None,
+        average_fps: None,
+        one_percent_low_fps: None,
+        frame_time_ms: None,
+        message: "Várakozás a játék képkockaadataira…".into(),
+    };
+    *state.child.lock().map_err(|error| error.to_string())? = Some(child);
+
+    let reader_latest = Arc::clone(&latest);
+    thread::spawn(move || {
+        let mut header: Option<Vec<String>> = None;
+        let mut frames = VecDeque::new();
+        let mut frame_times = Vec::new();
+        let mut recent_frame_times = VecDeque::new();
+        let mut start = Instant::now();
+        for line in BufReader::new(stdout).lines().flatten() {
+            let line = line.trim_start_matches('\u{feff}').trim();
+            if line.is_empty() { continue; }
+            if line.starts_with("Application,") {
+                header = Some(line.split(',').map(|part| part.trim().trim_matches('"').to_string()).collect());
+                start = Instant::now();
+                continue;
+            }
+            let Some(columns) = header.as_ref() else { continue; };
+            let values: Vec<&str> = line.split(',').map(|part| part.trim().trim_matches('"')).collect();
+            let pid_column = columns.iter().position(|name| name.eq_ignore_ascii_case("ProcessID"));
+            if let Some(index) = pid_column {
+                if values.get(index).and_then(|value| value.parse::<u32>().ok()) != Some(process_id) { continue; }
+            }
+            let now = Instant::now();
+            frames.push_back(now);
+            while frames.front().is_some_and(|time| now.duration_since(*time) > Duration::from_secs(1)) { frames.pop_front(); }
+            let frame_time_column = columns.iter().position(|name| name.eq_ignore_ascii_case("MsBetweenDisplayChange"))
+                .or_else(|| columns.iter().position(|name| name.eq_ignore_ascii_case("MsBetweenPresents")));
+            if let Some(frame_time) = frame_time_column
+                .and_then(|index| values.get(index))
+                .and_then(|value| value.parse::<f64>().ok())
+                .filter(|value| value.is_finite() && (0.5..=1000.0).contains(value))
+            {
+                frame_times.push(frame_time);
+                recent_frame_times.push_back((now, frame_time));
+                while recent_frame_times.front().is_some_and(|(time, _)| now.duration_since(*time) > Duration::from_secs(1)) {
+                    recent_frame_times.pop_front();
+                }
+            }
+            if now.duration_since(start) >= Duration::from_secs(1) {
+                let fps = if !recent_frame_times.is_empty() {
+                    1000.0 / (recent_frame_times.iter().map(|(_, value)| value).sum::<f64>() / recent_frame_times.len() as f64)
+                } else { frames.len() as f64 };
+                let frame_time_ms = if !recent_frame_times.is_empty() {
+                    Some(recent_frame_times.iter().map(|(_, value)| value).sum::<f64>() / recent_frame_times.len() as f64)
+                } else if fps > 0.0 { Some(1000.0 / fps) } else { None };
+                let total_frame_time = frame_times.iter().sum::<f64>();
+                let average_fps = if total_frame_time > 0.0 { Some(frame_times.len() as f64 * 1000.0 / total_frame_time) } else { None };
+                let one_percent_low_fps = if frame_times.len() >= 100 {
+                    let mut slowest = frame_times.clone();
+                    slowest.sort_by(|left, right| right.total_cmp(left));
+                    let slow_count = (slowest.len() as f64 * 0.01).ceil() as usize;
+                    let average_slowest = slowest.iter().take(slow_count.max(1)).sum::<f64>() / slow_count.max(1) as f64;
+                    (average_slowest > 0.0).then_some(1000.0 / average_slowest)
+                } else { None };
+                if let Ok(mut status) = reader_latest.lock() {
+                    status.fps = (fps > 0.0).then_some(fps);
+                    status.average_fps = average_fps;
+                    status.one_percent_low_fps = one_percent_low_fps;
+                    status.frame_time_ms = frame_time_ms;
+                    status.message = if fps > 0.0 { "Valós képkockaadat · gördülő 1 másodperces mérés".into() } else { "Nem érkezik képkockaadat a kiválasztott folyamattól.".into() };
+                }
+            }
+        }
+        if let Ok(mut status) = reader_latest.lock() {
+            status.is_running = false;
+            status.fps = None;
+            status.frame_time_ms = None;
+            if !status.message.starts_with("A Windows letiltotta") {
+                status.message = "A játék bezárult vagy az FPS mérés leállt.".into();
+            }
+        }
+    });
+
+    thread::spawn(move || {
+        for line in BufReader::new(stderr).lines().flatten() {
+            if line.to_lowercase().contains("access denied") || line.to_lowercase().contains("failed to start trace") {
+                if let Ok(mut status) = latest.lock() {
+                    status.message = "A Windows letiltotta a képkockaadatok olvasását. Add a fiókot a Performance Log Users csoporthoz, majd jelentkezz ki és vissza.".into();
+                }
+            }
+        }
+    });
+    Ok(())
+}
+
+#[tauri::command]
+fn stop_game_fps(state: State<'_, FpsState>) -> Result<(), String> {
+    stop_fps_inner(&state);
+    Ok(())
+}
+
+fn stop_fps_inner(state: &FpsState) {
+    if let Ok(mut child) = state.child.lock() {
+        if let Some(mut process) = child.take() {
+            let _ = process.kill();
+            let _ = process.wait();
+        }
+    }
+    if let Ok(mut status) = state.latest.lock() {
+        if status.process_id.is_some() {
+            status.is_running = false;
+            status.fps = None;
+            status.frame_time_ms = None;
+            status.message = "A játék FPS-mérése leállt.".into();
+        } else {
+            *status = GameFpsStatus::default();
         }
     }
 }
@@ -177,20 +438,11 @@ fn start_hardware_engine(app: tauri::AppHandle, state: State<'_, EngineState>) -
 
     let latest = Arc::clone(&state.latest);
     let running = Arc::clone(&state.running);
-    let pending_controls = Arc::clone(&state.pending_controls);
     thread::spawn(move || {
         for line in BufReader::new(stdout).lines() {
             let Ok(line) = line else { break };
             if let Ok(message) = serde_json::from_str::<Value>(&line) {
-                if let Some(command_id) = message.get("controlCommandId").and_then(Value::as_u64) {
-                    let success = message.get("success").and_then(Value::as_bool).unwrap_or(false);
-                    let detail = message.get("message").and_then(Value::as_str).unwrap_or("A hardvermotor nem adott részletes választ.").to_string();
-                    if let Ok(mut pending) = pending_controls.lock() {
-                        if let Some(sender) = pending.remove(&command_id) {
-                            let _ = sender.send(if success { Ok(detail) } else { Err(detail) });
-                        }
-                    }
-                } else if message.get("Timestamp").or_else(|| message.get("timestamp")).is_some() {
+                if message.get("Timestamp").or_else(|| message.get("timestamp")).is_some() {
                     if let Ok(mut current) = latest.lock() {
                         *current = Some(message);
                     }
@@ -213,45 +465,6 @@ fn start_hardware_engine(app: tauri::AppHandle, state: State<'_, EngineState>) -
 #[tauri::command]
 fn get_hardware_snapshot(state: State<'_, EngineState>) -> Option<Value> {
     state.latest.lock().ok().and_then(|value| value.clone())
-}
-
-#[tauri::command]
-fn set_fan_control(state: State<'_, EngineState>, sensor_identifier: String, value: Option<f32>) -> Result<String, String> {
-    if sensor_identifier.is_empty() || sensor_identifier.len() > 512 {
-        return Err("Érvénytelen hardvercsatorna-azonosító.".into());
-    }
-    if let Some(percent) = value {
-        if !percent.is_finite() || !(0.0..=100.0).contains(&percent) {
-            return Err("A vezérlési értéknek 0 és 100% közé kell esnie.".into());
-        }
-    }
-
-    let mut stdin = state.stdin.lock().map_err(|e| e.to_string())?;
-    let pipe = stdin.as_mut().ok_or_else(|| "A hardvermotor nem fut.".to_string())?;
-    let command_id = state.next_control_id.fetch_add(1, Ordering::SeqCst);
-    let (sender, receiver) = mpsc::sync_channel(1);
-    state.pending_controls.lock().map_err(|e| e.to_string())?.insert(command_id, sender);
-
-    let command = serde_json::json!({
-        "commandId": command_id,
-        "action": "setControl",
-        "sensorIdentifier": sensor_identifier,
-        "value": value
-    });
-    let write_result = writeln!(pipe, "{}", command).and_then(|_| pipe.flush());
-    drop(stdin);
-    if let Err(error) = write_result {
-        if let Ok(mut pending) = state.pending_controls.lock() { pending.remove(&command_id); }
-        return Err(format!("A hardverparancs küldése nem sikerült: {error}"));
-    }
-
-    match receiver.recv_timeout(Duration::from_secs(5)) {
-        Ok(result) => result,
-        Err(_) => {
-            if let Ok(mut pending) = state.pending_controls.lock() { pending.remove(&command_id); }
-            Err("A hardvermotor nem válaszolt a ventilátorparancsra.".into())
-        }
-    }
 }
 
 #[tauri::command]
@@ -286,13 +499,13 @@ fn stop_engine_inner(state: &EngineState) {
         }
     }
     state.running.store(false, Ordering::SeqCst);
-    if let Ok(mut pending) = state.pending_controls.lock() { pending.clear(); }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let app = tauri::Builder::default()
         .manage(EngineState::default())
+        .manage(FpsState::default())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .invoke_handler(tauri::generate_handler![
@@ -300,9 +513,12 @@ pub fn run() {
             save_diagnostic_thresholds,
             start_hardware_engine,
             get_hardware_snapshot,
-            set_fan_control,
             get_hardware_engine_status,
-            stop_hardware_engine
+            stop_hardware_engine,
+            get_running_games,
+            get_game_fps_status,
+            start_game_fps,
+            stop_game_fps
         ])
         .build(tauri::generate_context!())
         .expect("error while building NEXUS");
@@ -311,6 +527,8 @@ pub fn run() {
         if matches!(event, tauri::RunEvent::Exit) {
             let state = app_handle.state::<EngineState>();
             stop_engine_inner(&state);
+            let fps_state = app_handle.state::<FpsState>();
+            stop_fps_inner(&fps_state);
         }
     });
 }

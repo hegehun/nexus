@@ -1,20 +1,26 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { check, type Update } from "@tauri-apps/plugin-updater";
+import { openUrl } from "@tauri-apps/plugin-opener";
 import "./App.css";
+import nexusWordmark from "./assets/nexus-wordmark.svg";
 
 import WindowControls from "./WindowControls";
 
-const navigation = [
-  { group: "FŐMENÜ", items: [["Áttekintés", "⌂"], ["Processzor", "▦"], ["Grafikus vezérlő", "▧"], ["Memória", "▤"], ["Háttértárak", "▣"]] },
-  { group: "ESZKÖZÖK", items: [["Hűtés", "✣"], ["Ventilátorvezérlés", "◉"], ["Teljesítmény", "⌁"], ["Guardian", "⬡"]] },
+type ModuleIconName = "overview" | "cpu" | "gpu" | "memory" | "storage" | "cooling" | "performance" | "guardian" | "system" | "settings" | "temperature" | "load" | "capacity";
+const navigation: { group: string; items: [string, ModuleIconName][] }[] = [
+  { group: "FŐMENÜ", items: [["Áttekintés", "overview"], ["Processzor", "cpu"], ["Grafikus vezérlő", "gpu"], ["Memória", "memory"], ["Háttértárak", "storage"]] },
+  { group: "ESZKÖZÖK", items: [["Hűtés", "cooling"], ["Teljesítmény", "performance"], ["Guardian", "guardian"]] },
 ];
 const themes = [
-  { value: "blue", label: "NEON BLUE" },
-  { value: "purple", label: "CYBER PURPLE" },
-  { value: "green", label: "MATRIX GREEN" },
-  { value: "red", label: "REDLINE" },
-  { value: "ice", label: "ICE WHITE" },
+  { value: "blue", label: "KÉK", color: "#378fff" },
+  { value: "purple", label: "LILA", color: "#b18aff" },
+  { value: "green", label: "ZÖLD", color: "#42dda5" },
+  { value: "red", label: "PIROS", color: "#ff637b" },
+  { value: "rose", label: "RÓZSAÉJ", color: "#ff708d" },
+  { value: "aurora", label: "AURORA NOCTURNE", color: "#25e1cb" },
+  { value: "ice", label: "JÉGKÉK", color: "#82d9ff" },
 ] as const;
 type Theme = typeof themes[number]["value"];
 function readSavedTheme(): Theme {
@@ -24,6 +30,33 @@ function readSavedTheme(): Theme {
   } catch {
     return "blue";
   }
+}
+
+function ModuleIcon({ name, className = "" }: { name: ModuleIconName; className?: string }) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {name === "overview" && <><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-7h6v7"/></>}
+    {name === "cpu" && <><rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m-3 6h3m14-6h3m-3 6h3"/><path d="M9 9h6v6H9z" opacity=".55"/></>}
+    {name === "gpu" && <><rect x="2.5" y="5.5" width="19" height="12.5" rx="1.7"/><circle cx="8.5" cy="11.7" r="3.1"/><circle cx="16" cy="11.7" r="3.1"/><circle cx="8.5" cy="11.7" r=".7" fill="currentColor"/><circle cx="16" cy="11.7" r=".7" fill="currentColor"/><path d="M8.5 9.4v4.6m-2.3-2.3h4.6M16 9.4V14m-2.3-2.3h4.6M5 20v-2m14 2v-2"/></>}
+    {name === "memory" && <><rect x="2.5" y="7" width="19" height="10" rx="1.7"/><path d="M5.5 10h13v4h-13zM5 18v2m3-2v2m3-2v2m3-2v2m3-2v2m3-2v2"/><path d="M7 11.2h1m2 0h1m2 0h1m2 0h1"/></>}
+    {name === "storage" && <><rect x="3.5" y="3" width="17" height="18" rx="3"/><path d="M6.5 7.5h11m-11 4.5h11m-11 4.5h11"/><circle cx="17.5" cy="18.5" r=".7" fill="currentColor"/></>}
+    {name === "cooling" && <><circle cx="12" cy="12" r="2"/><path d="M12 10c-1-3-1-6 1-7 2-1 4 1 3 3-1 2-2 3-4 4Zm2 2c3-1 6-1 7 1 1 2-1 4-3 3-2-1-3-2-4-4Zm-2 2c1 3 1 6-1 7-2 1-4-1-3-3 1-2 2-3 4-4Zm-2-2c-3 1-6 1-7-1-1-2 1-4 3-3 2 1 3 2 4 4Z"/></>}
+    {name === "performance" && <><path d="M4 19V12m5 7V7m6 12V10m5 9V4"/><path d="M2 21h20"/></>}
+    {name === "guardian" && <><path d="M12 3 20 6v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-3Z"/><path d="m8.5 12 2.3 2.3 4.8-5"/></>}
+    {name === "system" && <><rect x="3" y="4" width="8" height="7" rx="1"/><rect x="13" y="4" width="8" height="7" rx="1"/><rect x="3" y="13" width="8" height="7" rx="1"/><rect x="13" y="13" width="8" height="7" rx="1"/></>}
+    {name === "settings" && <><path d="M10.3 2.8h3.4l.6 2.1a7.3 7.3 0 0 1 1.5.9l2.1-.7 1.7 2.9-1.5 1.6a7.7 7.7 0 0 1 0 1.8l1.5 1.6-1.7 2.9-2.1-.7a7.3 7.3 0 0 1-1.5.9l-.6 2.1h-3.4l-.6-2.1a7.3 7.3 0 0 1-1.5-.9l-2.1.7-1.7-2.9 1.5-1.6a7.7 7.7 0 0 1 0-1.8L4.8 8l1.7-2.9 2.1.7a7.3 7.3 0 0 1 1.5-.9l.2-2.1Z"/><circle cx="12" cy="10.5" r="2.7"/></>}
+    {name === "temperature" && <><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0Z"/><path d="M12 11v7"/></>}
+    {name === "load" && <><path d="M3 15a9 9 0 0 1 18 0"/><path d="m12 14 4-5M5 18h14"/><circle cx="12" cy="14" r="1" fill="currentColor"/></>}
+    {name === "capacity" && <><path d="M4 19V5m0 14h16"/><path d="m7 15 4-4 3 2 5-6"/></>}
+  </svg>;
+}
+
+function ThemePicker({ value, onChange, className = "" }: { value: Theme; onChange: (value: Theme) => void; className?: string }) {
+  const [open, setOpen] = useState(false);
+  const selected = themes.find(theme => theme.value === value) ?? themes[0];
+  return <div className={`theme-picker ${className}`} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false); }} onKeyDown={event => { if (event.key === "Escape") setOpen(false); }}>
+    <button className="theme-picker-trigger" type="button" aria-label="Megjelenési téma" aria-expanded={open} onClick={() => setOpen(current => !current)}><i style={{ backgroundColor: selected.color }} /><span>{selected.label}</span><b>⌄</b></button>
+    {open && <div className="theme-picker-menu" role="listbox" aria-label="Témák">{themes.map(theme => <button key={theme.value} type="button" role="option" aria-selected={value === theme.value} className={value === theme.value ? "selected" : ""} onClick={() => { onChange(theme.value); setOpen(false); }}><i style={{ backgroundColor: theme.color }} />{theme.label}{value === theme.value && <b>✓</b>}</button>)}</div>}
+  </div>;
 }
 
 type DiagnosticsThresholds = { cpuWarning: number; cpuCritical: number; gpuWarning: number; gpuCritical: number; memoryWarning: number; memoryCritical: number; storageWarning: number; storageCritical: number };
@@ -52,45 +85,15 @@ function parseThresholdDraft(draft: ThresholdDraft): DiagnosticsThresholds | nul
   return isValidThresholds(value) ? value : null;
 }
 
-type Sensor = { Name?: string; SensorType?: string; Value?: number | null; Status?: string; Identifier?: string; CanControl?: boolean; MinimumControlValue?: number | null; MaximumControlValue?: number | null; ControlMode?: string | null };
+type Sensor = { Name?: string; SensorType?: string; Value?: number | null; Status?: string; Identifier?: string };
 type Device = { Name?: string; HardwareType?: string; Sensors?: Sensor[] };
 type CpuCoreReading = { number: number; load: number | null; clock: number | null; temperature: number | null };
-type HardwareControlChannel = { deviceName: string; name: string; identifier: string; value: number | null; canControl: boolean; minimum: number | null; maximum: number | null; mode: string; fanRpm: number | null; hasFanSensor: boolean };
-function NativeFanControlChannel({ channel }: { channel: HardwareControlChannel }) {
-  const minimum = channel.minimum ?? 0;
-  const maximum = channel.maximum ?? 100;
-  const initial = Math.min(maximum, Math.max(minimum, 50));
-  const [target, setTarget] = useState(initial);
-  const [status, setStatus] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  const send = async (value: number | null) => {
-    setBusy(true);
-    setStatus(value === null ? "Alapértelmezett mód visszaállítása…" : "Sebesség alkalmazása…");
-    try {
-      const response = await invoke<string>("set_fan_control", { sensorIdentifier: channel.identifier, value });
-      setStatus(response);
-    } catch (error) {
-      setStatus("Nem sikerült: " + String(error));
-    } finally {
-      setBusy(false);
-    }
-  };
-  return <article className="fan-control-native-card">
-    <div className="fan-control-native-card-head"><div><strong>{channel.name}</strong><small>{channel.deviceName}</small></div><span className={channel.canControl ? "is-writable" : "is-readonly"}>{channel.canControl ? "KIMENET TÁMOGATOTT" : "CSAK OLVASHATÓ"}</span></div>
-    <div className="fan-control-native-current"><span>Jelenlegi kimenet</span><b>{display(channel.value, "%", 1)}</b><small>mód: {channel.mode}</small></div>
-    <div className={"fan-control-native-feedback" + (channel.fanRpm === 0 ? " has-zero-rpm" : "")}>{channel.hasFanSensor ? channel.fanRpm === null ? "RPM-visszajelzés: N/A" : channel.fanRpm === 0 ? "0 RPM · nincs forgásjel (lehet üres csatlakozó)" : "Fordulatszám: " + display(channel.fanRpm, " RPM", 0) : "Nincs párosított RPM-szenzor"}</div>
-    {channel.canControl && <div className="fan-control-native-actions">
-      <label><span>Új érték · {target.toFixed(0)}%</span><input type="range" min={minimum} max={maximum} step="1" value={target} onChange={event => setTarget(Number(event.target.value))} /></label>
-      <div><button type="button" disabled={busy || !channel.identifier} onClick={() => void send(target)}>Alkalmaz</button><button className="fan-control-native-reset" type="button" disabled={busy || !channel.identifier} onClick={() => void send(null)}>Hardver alapbeállítás</button></div>
-      {status && <small className="fan-control-native-status" role="status">{status}</small>}
-    </div>}
-  </article>;
-}
 type GuardianEvent = { Id: string; Device: string; Sensor: string; Severity: string; Message: string; StartedAt: string; IsActive: boolean; ResolvedAt?: string | null };
 type HealthReport = { Score: number | null; CoveragePercent: number; Status: string; Reasons: string[] };
-type WindowsInfo = { WindowsEdition?: string | null; WindowsVersion?: string | null; Manufacturer?: string | null; Model?: string | null; SystemType?: string | null; UsableMemoryGb?: number | null; IsActivated?: boolean | null };
+type WindowsInfo = { WindowsEdition?: string | null; WindowsVersion?: string | null; Manufacturer?: string | null; Model?: string | null; ModelSource?: string | null; SystemType?: string | null; UsableMemoryGb?: number | null; IsActivated?: boolean | null };
 type Snapshot = { Timestamp?: string; ComputerName?: string; OperatingSystem?: string; Architecture?: string; LogicalProcessorCount?: number; WindowsInfo?: WindowsInfo; Devices?: Device[]; Health?: HealthReport; GuardianEvents?: GuardianEvent[] };
+type GameProcess = { processId: number; processName: string };
+type GameFpsStatus = { isRunning: boolean; processId: number | null; processName: string | null; fps: number | null; averageFps: number | null; onePercentLowFps: number | null; frameTimeMs: number | null; message: string };
 type PerformanceSample = { timestamp: string; cpuLoad: number | null; cpuTemp: number | null; gpuLoad: number | null; gpuTemp: number | null; memoryLoad: number | null };
 type PerformanceKey = "cpuLoad" | "cpuTemp" | "gpuLoad" | "gpuTemp" | "memoryLoad";
 type PerformanceSeries = { key: PerformanceKey; label: string; color: string };
@@ -101,6 +104,28 @@ type CoolingTrendSample = { timestamp: string; values: Record<string, number | n
 type CoolingTrendSeries = { key: string; label: string; color: string; value: number | null };
 type CoolingTemperatureReading = CoolingTrendSeries & { value: number | null; warning: number; critical: number; hasSensor: boolean };
 type CoolingDetailRow = { deviceName: string; deviceIndex: number; sensor: Sensor | null; sensorIndex: number };
+
+function readSavedAutoFpsGames(): string[] {
+  try {
+    const stored = JSON.parse(window.localStorage.getItem("nexus-fps-auto-games") ?? "[]");
+    return Array.isArray(stored) ? stored.filter((value): value is string => typeof value === "string" && value.length > 0).slice(0, 12) : [];
+  } catch {
+    return [];
+  }
+}
+
+function readSavedAutoFpsEnabled(): boolean {
+  try { return window.localStorage.getItem("nexus-fps-auto-enabled") !== "false"; } catch { return true; }
+}
+
+function readSavedBackground(): string {
+  try {
+    const saved = window.localStorage.getItem("nexus-custom-background");
+    return saved?.startsWith("data:image/") ? saved : "";
+  } catch {
+    return "";
+  }
+}
 const coolingTimeRanges: CoolingTimeRange[] = [1, 5, 15, 30, 60];
 const coolingTemperatureScales: CoolingTemperatureScale[] = ["auto", "60", "80", "100", "120"];
 function readSavedCoolingPreferences(): CoolingPreferences {
@@ -141,7 +166,7 @@ function findSensor(device: Device | undefined, names: string[], type?: string):
 
   // Prefer exact sensor-name matches, then fall back to a partial match.
   const normalized = names.map(name => name.toLowerCase());
-  const found =
+  const found = normalized.length === 0 ? candidates[0] :
     candidates.find(sensor => normalized.includes((readField<string>(sensor, "Name", "name") ?? "").toLowerCase())) ??
     candidates.find(sensor => {
       const name = (readField<string>(sensor, "Name", "name") ?? "").toLowerCase();
@@ -189,11 +214,34 @@ function translateSensorName(name: string): string {
     "life": "Hátralévő élettartam", "data read": "Olvasott adatmennyiség", "data written": "Írt adatmennyiség",
     "power on count": "Bekapcsolások száma", "power on hours": "Üzemóra",
     "read activity": "Olvasási aktivitás", "write activity": "Írási aktivitás", "total activity": "Összes aktivitás",
-    "cpu package": "CPU-csomag", "cpu total": "Teljes CPU-terhelés",
+    "cpu package": "CPU-csomag", "cpu total": "Teljes CPU-terhelés", "core (tctl/tdie)": "Processzormag (Tctl/Tdie)",
+    "gpu hot spot": "GPU-hotspot", "gpu temperature": "GPU-hőmérséklet", "physical memory": "Fizikai memória",
   };
   return known[name.trim().toLowerCase()] ?? name;
 }
-function translateSensorType(type: string | undefined): string {
+function translateSeverity(severity: string): string {
+  return severity === "Critical" ? "Kritikus" : severity === "Warning" ? "Figyelmeztetés" : severity;
+}
+function guardianMessageSummary(event: GuardianEvent): string {
+  const current = event.Message.match(/:\s*(-?\d+(?:[.,]\d+)?)\s*(°C|%)/i);
+  const threshold = event.Message.match(/(?:threshold(?:\s+is)?|küszöb)\s*:?\s*(-?\d+(?:[.,]\d+)?)\s*(°C|%)/i);
+  const thresholdLabel = event.Severity.toLowerCase() === "critical" ? "kritikus küszöb" : "figyelmeztetési küszöb";
+  if (current && threshold) return `Mért érték: ${current[1]} ${current[2]} · ${thresholdLabel}: ${threshold[1]} ${threshold[2]}.`;
+  return `A mért érték átlépte a beállított ${thresholdLabel} értékét.`;
+}
+function guardianGuidance(event: GuardianEvent): string {
+  const sensor = `${event.Sensor} ${event.Message}`.toLowerCase();
+  const context = `${sensor} ${event.Device}`.toLowerCase();
+  if (/storage|ssd|nvme|drive|tárhely|meghajt|composite/.test(context))
+    return "Ellenőrizd a meghajtó hűtését és a ház légáramlását, különösen NVMe SSD-nél a hűtőbordát. Nézd meg a meghajtó állapotát és a SMART-jelzéseket. Ha a magas hőmérséklet tartós vagy hibajelzés is megjelenik, készíts biztonsági másolatot, és csökkentsd a nagy lemezterhelést.";
+  if (/memory|ram|physical memory|memória/.test(context))
+    return "Nyisd meg a Feladatkezelő → Folyamatok nézetet, és rendezd a listát memóriahasználat szerint. Zárd be a szükségtelen programokat, majd ellenőrizd, visszaesik-e a használat. Ha egy alkalmazás folyamatosan növeli a memóriaigényét, indítsd újra vagy frissítsd.";
+  if (/cpu|processor|processzor|tctl|tdie|package/.test(sensor))
+    return "Ellenőrizd, hogy a CPU-hűtő ventilátora vagy pumpája működik-e, nincs-e por a hűtőn, és szabad-e a ház légáramlása. Nézd meg a Feladatkezelőben, melyik folyamat terheli a processzort. Tartós kritikus hőmérsékletnél állítsd le a nagy terhelést, és hagyd lehűlni a gépet.";
+  if (/gpu|graphics|geforce|grafikus|videokártya/.test(context))
+    return "Ellenőrizd, hogy a videókártya ventilátorai terhelés alatt forognak-e, nincs-e por a hűtőn, és kap-e levegőt a kártya. Csökkentsd vagy zárd be a játék terhelését, majd figyeld meg, visszaesik-e a hőmérséklet. Tartós kritikus értéknél ne folytasd a terhelést.";
+  return "Ellenőrizd a jelzett eszköz szenzorértékét, hűtését és aktuális terhelését. Ha az érték tartósan a küszöb felett marad, csökkentsd a terhelést, és nézd meg, ismétlődik-e a riasztás.";
+}function translateSensorType(type: string | undefined): string {
   const known: Record<string, string> = {
     temperature: "Hőmérséklet", load: "Terhelés", control: "Vezérlés", level: "Szint",
     fan: "Ventilátor", clock: "Órajel", power: "Teljesítmény", voltage: "Feszültség",
@@ -226,6 +274,13 @@ function chartTimeLabel(timestamp: string | undefined): string {
   if (!timestamp) return "—";
   const date = new Date(timestamp);
   return Number.isNaN(date.getTime()) ? "—" : date.toLocaleTimeString("hu-HU", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
+function UtilizationRing({ value, caption, color }: { value: number | null; caption: string; color: string }) {
+  const percent = value === null ? 0 : Math.max(0, Math.min(100, value));
+  return <div className="utilization-ring" style={{ "--ring-color": color, "--ring-progress": `${percent}%` } as React.CSSProperties} aria-label={`${caption}: ${value === null ? "N/A" : `${Math.round(value)}%`}`}>
+    <div><strong>{value === null ? "N/A" : `${Math.round(value)}%`}</strong></div>
+  </div>;
 }
 
 function PerformanceChart({ title, unit, samples, series, maxValue = 100 }: { title: string; unit: string; samples: PerformanceSample[]; series: PerformanceSeries[]; maxValue?: number }) {
@@ -273,6 +328,16 @@ function PerformanceChart({ title, unit, samples, series, maxValue = 100 }: { ti
       </>}
     </section>
   );
+}
+
+function MiniTrend({ values, color, label }: { values: (number | null)[]; color: string; label: string }) {
+  const points = values.filter((value): value is number => value !== null && Number.isFinite(value));
+  if (points.length < 2) return <div className="overview-trend-wrap overview-trend-empty"><span>Az előzmények gyűjtése folyamatban</span><small>Terhelés · utóbbi 60 mp</small></div>;
+  const low = Math.min(...points);
+  const high = Math.max(...points);
+  const spread = Math.max(high - low, 1);
+  const line = points.map((value, index) => `${index === 0 ? "M" : "L"} ${(index / (points.length - 1) * 240).toFixed(1)} ${(34 - ((value - low) / spread) * 25).toFixed(1)}`).join(" ");
+  return <div className="overview-trend-wrap"><svg className="overview-trend" viewBox="0 0 240 40" role="img" aria-label={`${label} terhelési előzménye`}><path d={`${line} L 240 40 L 0 40 Z`} fill={color} opacity=".12"/><path d={line} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg><small>Terhelés · utóbbi 60 mp</small></div>;
 }
 
 function CoolingTemperatureChart({ samples, series, historyMinutes, temperatureScale, onColorChange }: { samples: CoolingTrendSample[]; series: CoolingTrendSeries[]; historyMinutes: CoolingTimeRange; temperatureScale: CoolingTemperatureScale; onColorChange: (key: string, color: string) => void }) {
@@ -377,7 +442,7 @@ function CoolingTemperatureChart({ samples, series, historyMinutes, temperatureS
         {series.map(item => {
           const isVisible = !hiddenSeries.includes(item.key);
           return <div className="cooling-series-control" key={item.key}>
-            <button type="button" className={isVisible ? "cooling-series-toggle" : "cooling-series-toggle is-hidden"} aria-pressed={isVisible} aria-label={`${item.label} görbe ${isVisible ? "elrejtése" : "megjelenítése"}`} title={item.label} onClick={() => setHiddenSeries(current => current.includes(item.key) ? current.filter(key => key !== item.key) : [...current, item.key])}>
+            <button type="button" className={isVisible ? "cooling-series-toggle" : "cooling-series-toggle is-hidden"} aria-pressed={isVisible} aria-label={`${item.label} görbe ${isVisible ? "elrejtése" : "megjelenítése"}`} onClick={() => setHiddenSeries(current => current.includes(item.key) ? current.filter(key => key !== item.key) : [...current, item.key])}>
               <i style={{ "--series-color": item.color } as React.CSSProperties} /><span>{item.label}</span>
             </button>
             <label className="cooling-series-color-label"><span className="sr-only">{item.label} görbéjének színe</span><input className="cooling-series-color" type="color" value={item.color} aria-label={`${item.label} görbéjének színe`} onChange={event => onColorChange(item.key, event.target.value)} /></label>
@@ -389,32 +454,8 @@ function CoolingTemperatureChart({ samples, series, historyMinutes, temperatureS
 }
 type PerformanceStatProps = { label: string; value: string; detail: string; color: string };
 function PerformanceStat({ label, value, detail, color }: PerformanceStatProps) {
-  return <article className="performance-stat-card" style={{ "--stat-accent": color } as React.CSSProperties}><span>{label}</span><strong>{value}</strong><small>{detail}</small></article>;
-}
-
-type GaugeProps = { value: number | null; unit: string; label: string; color: string; ticks?: number; decimals?: number };
-
-function SemiGauge({ value, unit, label, color, ticks = 31, decimals = 0 }: GaugeProps) {
-  const safe = value === null ? 0 : Math.max(0, Math.min(100, value));
-  return (
-    <div className="semi-gauge" style={{ "--gauge-color": color } as React.CSSProperties}>
-      <svg viewBox="0 0 260 160" aria-hidden="true">
-        {Array.from({ length: ticks }, (_, i) => {
-          const angle = Math.PI + (Math.PI * i) / (ticks - 1);
-          const x1 = 130 + Math.cos(angle) * 91;
-          const y1 = 132 + Math.sin(angle) * 91;
-          const x2 = 130 + Math.cos(angle) * 108;
-          const y2 = 132 + Math.sin(angle) * 108;
-          const active = value !== null && i <= Math.round((safe / 100) * (ticks - 1));
-          return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} className={active ? "gauge-tick active" : "gauge-tick"} />;
-        })}
-        <path d="M 35 132 A 95 95 0 0 1 225 132" className="gauge-arc-track" />
-        {value !== null && <path d="M 35 132 A 95 95 0 0 1 225 132" pathLength="100" className="gauge-arc-value" style={{ strokeDasharray: `${safe} 100` }} />}
-        <ellipse cx="130" cy="145" rx="76" ry="10" className="gauge-floor-glow" />
-      </svg>
-      <div className="gauge-value"><strong>{value === null ? "N/A" : value.toFixed(decimals)}<small>{value === null ? "" : unit}</small></strong><span>{label}</span></div>
-    </div>
-  );
+  const icon: ModuleIconName = label.startsWith("CPU") ? "cpu" : label.startsWith("GPU") ? "gpu" : "memory";
+  return <article className="performance-stat-card" style={{ "--stat-accent": color } as React.CSSProperties}><span><ModuleIcon name={icon}/>{label}</span><strong>{value}</strong><small>{detail}</small></article>;
 }
 
 function App() {
@@ -424,6 +465,15 @@ function App() {
   const [expanded, setExpanded] = useState(true);
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [performanceHistory, setPerformanceHistory] = useState<PerformanceSample[]>([]);
+  const [gameProcesses, setGameProcesses] = useState<GameProcess[]>([]);
+  const [selectedGameProcessId, setSelectedGameProcessId] = useState("");
+  const [autoFpsEnabled, setAutoFpsEnabled] = useState(readSavedAutoFpsEnabled);
+  const [autoFpsGames, setAutoFpsGames] = useState<string[]>(readSavedAutoFpsGames);
+  const [customBackground, setCustomBackground] = useState(readSavedBackground);
+  const [backgroundMessage, setBackgroundMessage] = useState("");
+  const [gameFpsStatus, setGameFpsStatus] = useState<GameFpsStatus>({ isRunning: false, processId: null, processName: null, fps: null, averageFps: null, onePercentLowFps: null, frameTimeMs: null, message: "Válassz ki egy futó játékot a méréshez." });
+  const [gameFpsError, setGameFpsError] = useState("");
+  const autoFpsStarting = useRef(false);
   const [coolingHistory, setCoolingHistory] = useState<CoolingTrendSample[]>([]);
   const [coolingPreferences, setCoolingPreferences] = useState<CoolingPreferences>(readSavedCoolingPreferences);
   const [selectedStorageIndex, setSelectedStorageIndex] = useState(0);
@@ -476,6 +526,21 @@ function App() {
   }, [coolingPreferences]);
 
   useEffect(() => {
+    try { window.localStorage.setItem("nexus-fps-auto-enabled", String(autoFpsEnabled)); } catch { /* Optional local preference. */ }
+  }, [autoFpsEnabled]);
+
+  useEffect(() => {
+    try { window.localStorage.setItem("nexus-fps-auto-games", JSON.stringify(autoFpsGames)); } catch { /* Optional local preference. */ }
+  }, [autoFpsGames]);
+
+  useEffect(() => {
+    try {
+      if (customBackground) window.localStorage.setItem("nexus-custom-background", customBackground);
+      else window.localStorage.removeItem("nexus-custom-background");
+    } catch { /* Custom backgrounds are optional. */ }
+  }, [customBackground]);
+
+  useEffect(() => {
     let active = true;
     let timer: ReturnType<typeof setInterval> | undefined;
     const refresh = async () => {
@@ -504,6 +569,32 @@ function App() {
     return () => { active = false; if (timer) clearInterval(timer); };
   }, []);
 
+  useEffect(() => {
+    if (active !== "Teljesítmény") return;
+    let visible = true;
+    const refresh = async () => {
+      try {
+        const [processes, status] = await Promise.all([
+          invoke<GameProcess[]>("get_running_games"),
+          invoke<GameFpsStatus>("get_game_fps_status"),
+        ]);
+        if (!visible) return;
+        setGameProcesses(processes);
+        setGameFpsStatus(status);
+        setSelectedGameProcessId(current => current || (status.processId != null ? String(status.processId) : ""));
+        setGameFpsError("");
+      } catch (error) {
+        if (visible) setGameFpsError(String(error));
+      }
+    };
+    void refresh();
+    const timer = window.setInterval(() => void refresh(), 2000);
+    return () => {
+      visible = false;
+      window.clearInterval(timer);
+    };
+  }, [active]);
+
   const parsedThresholds = parseThresholdDraft(thresholdDraft);
   const updateThreshold = (key: keyof ThresholdDraft, value: string) => {
     setThresholdDraft(current => ({ ...current, [key]: value }));
@@ -523,9 +614,110 @@ function App() {
     try {
       await invoke("save_diagnostic_thresholds", { thresholds: parsedThresholds });
       setThresholdDraft(toThresholdDraft(parsedThresholds));
-      setThresholdMessage("Elmentve. A Health és a Guardian a következő szenzorméréstől ezeket használja.");
+      setThresholdMessage("Elmentve. Az állapotjelző és a Guardian ezeket használja a következő szenzorméréstől.");
     } catch (error) {
       setThresholdMessage("A mentés nem sikerült: " + String(error));
+    }
+  };
+  const chooseBackground = (file: File | null) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setBackgroundMessage("Csak képformátum választható háttérnek.");
+      return;
+    }
+    if (file.size > 1_500_000) {
+      setBackgroundMessage("Legfeljebb 1,5 MB méretű képet válassz, hogy a beállítás biztonságosan menthető maradjon.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setCustomBackground(reader.result);
+        setBackgroundMessage(`Beállítva: ${file.name}`);
+      }
+    };
+    reader.onerror = () => setBackgroundMessage("A kiválasztott kép nem olvasható.");
+    reader.readAsDataURL(file);
+  };
+  const refreshGameProcessList = async () => {
+    try {
+      const processes = await invoke<GameProcess[]>("get_running_games");
+      setGameProcesses(processes);
+      setGameFpsError("");
+    } catch (error) {
+      setGameFpsError(String(error));
+    }
+  };
+  const showFpsOverlay = async () => {
+    const existing = await WebviewWindow.getByLabel("fps-overlay");
+    if (existing) {
+      await existing.setAlwaysOnTop(true);
+      await existing.show();
+      return;
+    }
+    const overlay = new WebviewWindow("fps-overlay", {
+      url: "/?window=fps-overlay",
+      title: "NEXUS · Játék FPS",
+      width: 430,
+      height: 168,
+      minWidth: 360,
+      minHeight: 144,
+      center: true,
+      decorations: false,
+      transparent: true,
+      alwaysOnTop: true,
+      skipTaskbar: true,
+      resizable: true,
+      focus: false,
+      visible: true,
+    });
+    overlay.once("tauri://error", event => setGameFpsError("Az FPS átfedő kijelző nem nyílt meg: " + String(event.payload)));
+  };
+  const startGameFps = async (requestedProcessId?: number, requestedProcessName?: string, automatic = false) => {
+    const processId = requestedProcessId ?? Number(selectedGameProcessId);
+    if (!Number.isInteger(processId) || processId <= 0) return;
+    setGameFpsError("");
+    try {
+      await invoke("start_game_fps", { processId });
+      const processName = requestedProcessName ?? gameProcesses.find(process => process.processId === processId)?.processName ?? null;
+      setGameFpsStatus({ isRunning: true, processId, processName, fps: null, averageFps: null, onePercentLowFps: null, frameTimeMs: null, message: automatic ? "A mentett játék elindult · FPS-mérés automatikusan elindítva." : "Várakozás a játék képkockaadataira…" });
+      if (processName && !automatic) setAutoFpsGames(current => current.some(name => name.toLocaleLowerCase() === processName.toLocaleLowerCase()) ? current : [...current, processName]);
+      await showFpsOverlay();
+    } catch (error) {
+      setGameFpsError(String(error));
+    }
+  };
+
+  useEffect(() => {
+    if (!autoFpsEnabled || autoFpsGames.length === 0 || gameFpsStatus.isRunning) return;
+    let active = true;
+    const refresh = async () => {
+      if (autoFpsStarting.current) return;
+      try {
+        const processes = await invoke<GameProcess[]>("get_running_games");
+        if (!active) return;
+        const candidate = processes.find(process => autoFpsGames.some(name => name.localeCompare(process.processName, undefined, { sensitivity: "accent" }) === 0));
+        if (!candidate) return;
+        autoFpsStarting.current = true;
+        await startGameFps(candidate.processId, candidate.processName, true);
+      } catch (error) {
+        if (active) setGameFpsError("Az automatikus játékfigyelés hibája: " + String(error));
+      } finally {
+        autoFpsStarting.current = false;
+      }
+    };
+    void refresh();
+    const timer = window.setInterval(() => void refresh(), 3000);
+    return () => { active = false; window.clearInterval(timer); };
+  }, [autoFpsEnabled, autoFpsGames, gameFpsStatus.isRunning]);
+  const stopGameFps = async () => {
+    try {
+      await invoke("stop_game_fps");
+      setGameFpsStatus({ isRunning: false, processId: null, processName: null, fps: null, averageFps: null, onePercentLowFps: null, frameTimeMs: null, message: "A játék FPS-mérése leállt." });
+      const overlay = await WebviewWindow.getByLabel("fps-overlay");
+      if (overlay) await overlay.close();
+    } catch (error) {
+      setGameFpsError(String(error));
     }
   };
   const renderThresholdRow = (label: string, warningKey: keyof ThresholdDraft, criticalKey: keyof ThresholdDraft, unit: string, warningMin: number, warningMax: number, criticalMin: number, criticalMax: number) => (
@@ -533,14 +725,14 @@ function App() {
       <b>{label}</b>
       <span className="threshold-inputs">
         <span className="threshold-value"><label htmlFor={"threshold-" + warningKey}>Figyelmeztetés</label><span className="threshold-stepper">
-          <button className="threshold-step-button" type="button" aria-label={label + " figyelmeztetési küszöb csökkentése"} title="Csökkentés 1-gyel" onClick={() => stepThreshold(warningKey, -1, warningMin, warningMax)}>−</button>
+          <button className="threshold-step-button" type="button" aria-label={label + " figyelmeztetési küszöb csökkentése"} onClick={() => stepThreshold(warningKey, -1, warningMin, warningMax)}>−</button>
           <input id={"threshold-" + warningKey} type="number" min={warningMin} max={warningMax} step="1" value={thresholdDraft[warningKey]} onChange={event => updateThreshold(warningKey, event.target.value)} aria-label={label + " figyelmeztetési küszöb"} />
-          <button className="threshold-step-button" type="button" aria-label={label + " figyelmeztetési küszöb növelése"} title="Növelés 1-gyel" onClick={() => stepThreshold(warningKey, 1, warningMin, warningMax)}>+</button>
+          <button className="threshold-step-button" type="button" aria-label={label + " figyelmeztetési küszöb növelése"} onClick={() => stepThreshold(warningKey, 1, warningMin, warningMax)}>+</button>
         </span></span>
         <span className="threshold-value"><label htmlFor={"threshold-" + criticalKey}>Kritikus</label><span className="threshold-stepper">
-          <button className="threshold-step-button" type="button" aria-label={label + " kritikus küszöb csökkentése"} title="Csökkentés 1-gyel" onClick={() => stepThreshold(criticalKey, -1, criticalMin, criticalMax)}>−</button>
+          <button className="threshold-step-button" type="button" aria-label={label + " kritikus küszöb csökkentése"} onClick={() => stepThreshold(criticalKey, -1, criticalMin, criticalMax)}>−</button>
           <input id={"threshold-" + criticalKey} type="number" min={criticalMin} max={criticalMax} step="1" value={thresholdDraft[criticalKey]} onChange={event => updateThreshold(criticalKey, event.target.value)} aria-label={label + " kritikus küszöb"} />
-          <button className="threshold-step-button" type="button" aria-label={label + " kritikus küszöb növelése"} title="Növelés 1-gyel" onClick={() => stepThreshold(criticalKey, 1, criticalMin, criticalMax)}>+</button>
+          <button className="threshold-step-button" type="button" aria-label={label + " kritikus küszöb növelése"} onClick={() => stepThreshold(criticalKey, 1, criticalMin, criticalMax)}>+</button>
         </span></span>
         <em>{unit}</em>
       </span>
@@ -580,6 +772,8 @@ function App() {
       cpuName: cpu ? readField<string>(cpu, "Name", "name") ?? "CPU" : "CPU not detected",
       cpuTemp: findSensor(cpu, ["CPU Package", "Core (Tctl/Tdie)", "CPU Core", "Core Max"], "Temperature"),
       cpuLoad: findSensor(cpu, ["CPU Total", "Total"], "Load"),
+      cpuClock: findSensor(cpu, ["CPU Core", "Core #1", "Core 0"], "Clock"),
+      cpuPower: findSensor(cpu, ["CPU Package", "CPU Core", "CPU PPT", "CPU Power"], "Power") ?? findSensor(cpu, [], "Power"),
       gpuName: gpu ? readField<string>(gpu, "Name", "name") ?? "GPU" : "GPU not detected",
       gpuTemp: findSensor(gpu, ["GPU Core", "GPU Temperature", "GPU Hot Spot"], "Temperature"),
       gpuLoad: findSensor(gpu, ["GPU Core", "GPU D3D 3D", "GPU Core Load"], "Load"),
@@ -759,64 +953,74 @@ function App() {
     : observedCoolingTemperatures.some(reading => reading.value! >= reading.critical) ? "critical"
       : observedCoolingTemperatures.some(reading => reading.value! >= reading.warning) ? "warning" : "good";
 
-  const fanControlChannels = (snapshot?.Devices ?? []).flatMap(device => {
-    const deviceName = readField<string>(device, "Name", "name") ?? "Hardware";
-    const sensors = readField<Sensor[]>(device, "Sensors", "sensors") ?? [];
-    const fanSensors = sensors.filter(sensor => (readField<string>(sensor, "SensorType", "sensorType") ?? "").toLowerCase() === "fan");
-    const normalizeFanName = (name: string) => name.toLowerCase().replace(/\s*control$/i, "").replace(/[^a-z0-9]/g, "");
-    return sensors
-      .filter(sensor => (readField<string>(sensor, "SensorType", "sensorType") ?? "").toLowerCase() === "control")
-      .map(sensor => {
-        const name = readField<string>(sensor, "Name", "name") ?? "Vezérlőcsatorna";
-        const fanSensor = fanSensors.find(candidate => normalizeFanName(readField<string>(candidate, "Name", "name") ?? "") === normalizeFanName(name));
-        const fanValue = fanSensor ? readField<number | null>(fanSensor, "Value", "value") : null;
-        const fanStatus = fanSensor ? readField<string>(fanSensor, "Status", "status") : null;
-        const value = readField<number | null>(sensor, "Value", "value");
-        const status = readField<string>(sensor, "Status", "status");
-        const minimum = readField<number | null>(sensor, "MinimumControlValue", "minimumControlValue");
-        const maximum = readField<number | null>(sensor, "MaximumControlValue", "maximumControlValue");
-        return {
-          deviceName,
-          name,
-          identifier: readField<string>(sensor, "Identifier", "identifier") ?? "",
-          value: typeof value === "number" && Number.isFinite(value) && status === "Available" ? value : null,
-          canControl: readField<boolean>(sensor, "CanControl", "canControl") === true,
-          minimum: typeof minimum === "number" && Number.isFinite(minimum) ? minimum : null,
-          maximum: typeof maximum === "number" && Number.isFinite(maximum) ? maximum : null,
-          mode: readField<string>(sensor, "ControlMode", "controlMode") ?? "N/A",
-          hasFanSensor: fanSensor !== undefined,
-          fanRpm: typeof fanValue === "number" && Number.isFinite(fanValue) && fanStatus === "Available" ? fanValue : null,
-        };
-      });
-  });
-  const fanRpmReadings = (snapshot?.Devices ?? []).flatMap(device => {
-    const deviceName = readField<string>(device, "Name", "name") ?? "Hardware";
-    return (readField<Sensor[]>(device, "Sensors", "sensors") ?? [])
-      .filter(sensor => (readField<string>(sensor, "SensorType", "sensorType") ?? "").toLowerCase() === "fan")
-      .map((sensor, index) => ({
-        key: deviceName + ":" + index,
-        deviceName,
-        name: readField<string>(sensor, "Name", "name") ?? "Fan",
-        value: readField<number | null>(sensor, "Value", "value"),
-        status: readField<string>(sensor, "Status", "status"),
-      }));
-  });
   const isOverview = active === "Áttekintés";
+  const pageIcons: Record<string, ModuleIconName> = {
+    "Áttekintés": "overview", "Processzor": "cpu", "Grafikus vezérlő": "gpu", "Memória": "memory",
+    "Háttértárak": "storage", "Hűtés": "cooling", "Teljesítmény": "performance", "Guardian": "guardian",
+    "Rendszer és Windows": "system", "Beállítások": "settings",
+  };
+  const activePageIcon = pageIcons[active] ?? "system";
+  const healthStatusLabel: Record<string, string> = { Good: "Jó", Warning: "Figyelmeztetés", Critical: "Kritikus", InsufficientData: "Kevés adat" };
+  const activeGuardianEvents = (snapshot?.GuardianEvents ?? []).filter(event => event.IsActive);
+  const criticalGuardianCount = activeGuardianEvents.filter(event => event.Severity.toLowerCase() === "critical").length;
+  const guardianAlertStatus = !snapshot ? "unknown" : criticalGuardianCount > 0 ? "critical" : activeGuardianEvents.length > 0 ? "warning" : "good";
+  const guardianAlertSummary = !snapshot ? "A riasztási adatok betöltése folyamatban." : activeGuardianEvents.length === 0 ? "Nincs aktív Guardian-riasztás." : `${activeGuardianEvents.length} aktív riasztás · ${criticalGuardianCount} kritikus, ${activeGuardianEvents.length - criticalGuardianCount} figyelmeztetés.`;  const memoryUsedDisplay = metrics.ramUsedGiB === null ? "N/A" : formatMemoryGiB(metrics.ramUsedGiB);
+  const storageUsedDisplay = selectedStorage?.usedSpaceGiB == null ? "N/A" : formatMemoryGiB(selectedStorage.usedSpaceGiB);
+  const storageTotalDisplay = selectedStorage?.totalSpaceGiB == null ? "N/A" : formatMemoryGiB(selectedStorage.totalSpaceGiB);
+  const storageUsePercent = selectedStorage?.usedSpaceGiB != null && selectedStorage.totalSpaceGiB != null && selectedStorage.totalSpaceGiB > 0
+    ? Math.max(0, Math.min(100, selectedStorage.usedSpaceGiB / selectedStorage.totalSpaceGiB * 100)) : null;
+  const storageWarning = Number(thresholdDraft.storageWarning) || recommendedThresholds.storageWarning;
+  const storageCritical = Number(thresholdDraft.storageCritical) || recommendedThresholds.storageCritical;
+  const storageTemperatureStatus = selectedStorage?.temperature == null ? "unknown"
+    : selectedStorage.temperature >= storageCritical ? "critical"
+      : selectedStorage.temperature >= storageWarning ? "warning" : "good";
+  const storageTemperatureStatusLabel = storageTemperatureStatus === "critical" ? "Kritikus"
+    : storageTemperatureStatus === "warning" ? "Figyelmeztetés"
+      : storageTemperatureStatus === "good" ? "Jó" : "N/A";
+  const availableStorageTemperatures = metrics.storages.map(drive => drive.temperature).filter((value): value is number => value !== null);
+  const storageOverallStatus = metrics.storages.length === 0 || availableStorageTemperatures.length === 0 ? "unknown"
+    : availableStorageTemperatures.some(value => value >= storageCritical) ? "critical"
+      : availableStorageTemperatures.some(value => value >= storageWarning) ? "warning" : "good";
+  const performanceHealthStatus = snapshot?.Health?.Status === "Good" ? "good"
+    : snapshot?.Health?.Status === "Warning" ? "warning"
+      : snapshot?.Health?.Status === "Critical" ? "critical" : "unknown";
+  const temperatureFact = coolingStatus === "good" ? "Hőmérsékletek rendben"
+    : coolingStatus === "warning" ? "Hőmérsékleti figyelmeztetés"
+      : coolingStatus === "critical" ? "Magas hőmérséklet" : "Hőmérséklet N/A";
+  const performanceFact = performanceHealthStatus === "good" ? "Teljesítmény stabil"
+    : performanceHealthStatus === "warning" ? "Rendszerállapot: figyelmeztetés"
+      : performanceHealthStatus === "critical" ? "Rendszerállapot: kritikus" : "Teljesítmény N/A";
+  const storageFact = storageOverallStatus === "good" ? "Háttértárak állapota jó"
+    : storageOverallStatus === "warning" ? "Háttértár: figyelmeztetés"
+      : storageOverallStatus === "critical" ? "Háttértár: kritikus" : "Háttértár állapota N/A";
 
   return (
-    <main className={`nexus-app theme-${theme}`}>
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-mark">N</div>
-          <div><b>NEXUS</b><small>HARDWARE INTELLIGENCE</small></div>
+    <main className={`nexus-app theme-${theme}${customBackground ? " has-custom-background" : ""}`} style={customBackground ? { "--nexus-user-background": `url("${customBackground}")` } as React.CSSProperties : undefined}>
+      <header className="titlebar">
+        <div className="titlebar-summary" data-tauri-drag-region>
+          <b className="titlebar-nexus">NEXUS</b>
+          <div className="top-hardware-stats" aria-label="Élő hardveradatok">
+            <div className="top-hardware-stat"><ModuleIcon name="cpu"/><b>CPU</b><span className="top-stat-value">{display(metrics.cpuTemp, " °C", 0)}</span><i/><span className="top-stat-load">{display(metrics.cpuLoad, "%")}</span></div>
+            <div className="top-hardware-stat"><ModuleIcon name="gpu"/><b>GPU</b><span className="top-stat-value">{display(metrics.gpuTemp, " °C", 0)}</span><i/><span className="top-stat-load">{display(metrics.gpuLoad, "%")}</span></div>
+            <div className="top-hardware-stat"><ModuleIcon name="memory"/><b>RAM</b><span className="top-stat-value">{memoryUsedDisplay.replace(" GiB", "")}/{memoryTotalDisplay.replace(" GiB", "")}G</span><i/><span className="top-stat-load">{display(metrics.ramLoad, "%")}</span></div>
+            <div className="top-hardware-stat top-storage-stat"><ModuleIcon name="storage"/><b>TÁR</b><span className="top-stat-value">{storageUsedDisplay.replace(" GiB", "")}/{storageTotalDisplay.replace(" GiB", "")}G</span><i/><span className="top-stat-load">{storageUsePercent === null ? "N/A" : storageUsePercent.toFixed(0) + "%"}</span></div>
+          </div>
         </div>
+        <div className="titlebar-actions">
+          <ThemePicker value={theme} onChange={setTheme} />
+          <div className="user-chip">NX</div>
+          <WindowControls />
+        </div>
+      </header>
+      <aside className="sidebar">
+        <div className="brand"><img className="nexus-wordmark" src={nexusWordmark} alt="NEXUS Hardware Intelligence"/></div>
         <div className="sidebar-scroll">
           {navigation.map((section) => (
             <div className="nav-section" key={section.group}>
               <div className="nav-label">{section.group}</div>
               {section.items.map(([name, icon]) => (
                 <button key={name} className={`nav-item ${active === name ? "active" : ""}`} onClick={() => setActive(name)}>
-                  <span className="nav-icon">{icon}</span><span>{name}</span>
+                  <span className="nav-icon"><ModuleIcon name={icon}/></span><span>{name}</span>
                   {name === "Guardian" && (snapshot?.GuardianEvents ?? []).filter(event => event.IsActive).length > 0 && <i className="nav-alert">{(snapshot?.GuardianEvents ?? []).filter(event => event.IsActive).length}</i>}
                 </button>
               ))}
@@ -825,105 +1029,90 @@ function App() {
           <div className="nav-section">
             <button className="nav-label nav-label-button" onClick={() => setExpanded(!expanded)}>RENDSZER <span>{expanded ? "⌄" : "›"}</span></button>
             {expanded && <>
-              <button className={`nav-item ${active === "Rendszer és Windows" ? "active" : ""}`} onClick={() => setActive("Rendszer és Windows")}><span className="nav-icon">⌘</span>Rendszer és Windows</button>
-              <button className={`nav-item ${active === "Beállítások" ? "active" : ""}`} onClick={() => setActive("Beállítások")}><span className="nav-icon">⚙</span>Beállítások</button>
+              <button className={`nav-item ${active === "Rendszer és Windows" ? "active" : ""}`} onClick={() => setActive("Rendszer és Windows")}><span className="nav-icon"><ModuleIcon name="system"/></span>Rendszer és Windows</button>
+              <button className={`nav-item ${active === "Beállítások" ? "active" : ""}`} onClick={() => setActive("Beállítások")}><span className="nav-icon"><ModuleIcon name="settings"/></span>Beállítások</button>
             </>}
           </div>
         </div>
         <div className="sidebar-bottom">
-          <div className="engine-status"><span className="status-dot" /><div><b>NEXUS CORE</b><small>{engineStatus === "LIVE" ? "Valós szenzoradatok" : engineStatus === "OFFLINE" ? "Kapcsolat megszakadt" : "Motor indítása"}</small></div><em>{engineStatus}</em></div>
-          <div className="version">NEXUS · BUILD 0.2.0</div>
+          <div className="engine-status"><span className="status-dot" /><div><b>NEXUS MOTOR</b><small>{engineStatus === "LIVE" ? "Valós szenzoradatok" : engineStatus === "OFFLINE" ? "Nincs kapcsolat" : "Indítás folyamatban"}</small></div><em>{engineStatus === "LIVE" ? "ÉLŐ" : engineStatus === "OFFLINE" ? "KI" : "INDUL"}</em></div>
+          <div className="version">NEXUS · 0.3.0</div>
         </div>
       </aside>
 
       <section className="main-area">
-        <header className="titlebar">
-          <div className="breadcrumb" data-tauri-drag-region><span>NEXUS</span><i>/</i><b>{active}</b></div>
-          <div className="titlebar-actions">
-            <span className="data-mode"><i /> {engineStatus === "LIVE" ? "LIVE HARDWARE DATA" : engineStatus === "OFFLINE" ? "ENGINE OFFLINE" : "CONNECTING"}</span>
-            <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)} aria-label="Téma">
-              {themes.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-            </select>
-            <div className="user-chip">NX</div>
-            <WindowControls />
-          </div>
-        </header>
-
         <div className="content">
           <div className="page-heading">
-            <div><div className="eyebrow"><i /> {isOverview ? "SYSTEM OVERVIEW" : "LIVE HARDWARE DATA"}</div><h1>{isOverview ? "Welcome back!" : active}</h1><p>{isOverview ? "Így teljesít jelenleg a számítógéped." : active === "Ventilátorvezérlés" ? "Beépített ventilátorcsatornák és hardveres vezérlés." : "Részletes rendszerfelügyelet és hardverdiagnosztika."}</p></div>
+          <div><div className="eyebrow"><i /> {isOverview ? "ÁTTEKINTÉS" : "ÉLŐ HARDVERADATOK"}</div><div className="page-title-row"><span><ModuleIcon name={activePageIcon}/></span><h1>{active}</h1></div><p>{isOverview ? "A számítógép aktuális állapota és főbb adatai." : "Részletes rendszerfelügyelet és hardverdiagnosztika."}</p></div>
             <div className="heading-actions"><button onClick={() => setActive("Beállítások")}>Beállítások <span>›</span></button><button onClick={() => setActive("Rendszer és Windows")}>Saját PC <span>›</span></button></div>
           </div>
 
-          {active === "Ventilátorvezérlés" && <div className="fan-control-native-view">
-            <section className="diagnostics-panel">
-              <div className="fan-control-native-heading"><div><h2>NEXUS · Ventilátorvezérlés</h2><p>A NEXUS közvetlenül a hardver-backendet használja. Először zárd be a Fan Controlt és más ventilátorvezérlő programot.</p></div><span>{fanControlChannels.filter(channel => channel.canControl).length} írható csatorna</span></div>
-              {fanControlChannels.length === 0 ? <p>Nincs felismert ventilátorvezérlő-kimenet. A fordulatszám-érzékelők ettől még külön megjelenhetnek.</p> : <div className="fan-control-native-grid">{fanControlChannels.map((channel, index) => <NativeFanControlChannel channel={channel} key={channel.identifier || channel.deviceName + index} />)}</div>}
-            </section>
-            <section className="diagnostics-panel">
-              <h2>Ventilátorfordulatszámok</h2>
-              {fanRpmReadings.length === 0 ? <p>Nincs elérhető fordulatszám-szenzor.</p> : fanRpmReadings.map(reading => <div className="diagnostics-row fan-control-native-row" key={reading.key}>
-                <b>{reading.name}</b><span>{reading.status === "Available" ? display(reading.value ?? null, " RPM", 1) : "N/A"}</span><small>{reading.deviceName}</small>
-              </div>)}
-            </section>
-            <section className="diagnostics-panel">
-              <h2>Állapot</h2><p>A NEXUS most csak felismeri az írható csatornákat. A következő lépés a görbe- és kézi vezérlés lesz külön bekapcsolóval, hogy a program ne módosítsa a ventilátorokat felhasználói kérés nélkül.</p>
-            </section>
-          </div>}
           {isOverview && <>
-          <div className="overview-layout">
-            <aside className="health-column">
-              <div className="health-card" title={snapshot?.Health?.Reasons.join("\n")}>
-                <div className="health-title"> <span>♡</span> Health</div>
-                <div className={`health-good health-${snapshot?.Health?.Status ?? "pending"}`}><i /> {snapshot?.Health?.Score == null ? "Insufficient data" : snapshot.Health.Status}</div>
-                <div className="health-meter"><div className="health-fill" style={{ height: `${snapshot?.Health?.Score ?? 0}%` }} /><div className="health-scale"><b>100%</b>{Array.from({length:15},(_,i)=><i key={i}/>)}</div></div>
-                <div className="health-bottom"><b>{snapshot?.Health?.Score ?? "—"}</b><small>{snapshot?.Health?.CoveragePercent ?? 0}% DATA<br/>COVERAGE</small></div>
-              </div>
-            </aside>
+          <section className={`health-banner health-${(snapshot?.Health?.Status ?? "pending").toLowerCase()}`} aria-label="A rendszer aktuális állapota">
+            <div className={`guardian-alert-ring guardian-alert-${guardianAlertStatus}`} role="img" aria-label={guardianAlertSummary}><strong>{snapshot ? activeGuardianEvents.length : "—"}</strong><small>AKTÍV RIASZTÁS</small></div>
+            <i className="health-banner-divider"/>
+            <div className="health-summary"><span>RENDSZER ÁLLAPOTA</span><strong className="health-status-pill"><i/>{healthStatusLabel[snapshot?.Health?.Status ?? ""] ?? "Adatok betöltése"}</strong><p>{guardianAlertSummary}</p></div>
+            <div className="health-status-checks" aria-label="Állapotösszegzés">
+              <div><span className={`health-check-mark ${coolingStatus}`} aria-hidden="true">{coolingStatus === "good" ? "✓" : coolingStatus === "unknown" ? "–" : "!"}</span><span>{temperatureFact}</span></div>
+              <div><span className={`health-check-mark ${performanceHealthStatus}`} aria-hidden="true">{performanceHealthStatus === "good" ? "✓" : performanceHealthStatus === "unknown" ? "–" : "!"}</span><span>{performanceFact}</span></div>
+              <div><span className={`health-check-mark ${storageOverallStatus}`} aria-hidden="true">{storageOverallStatus === "good" ? "✓" : storageOverallStatus === "unknown" ? "–" : "!"}</span><span>{storageFact}</span></div>
+            </div>
+          </section>
 
             <section className="hardware-grid">
-              <article className="hardware-card cpu-card">
-                <div className="card-icon">▦</div><div className="card-copy"><span>PROCESSOR</span><h2>CPU</h2><p>{metrics.cpuName}</p><button onClick={() => setActive("Processzor")}>Részletek <b>›</b></button></div>
-                <SemiGauge value={metrics.cpuTemp} unit="°C" decimals={1} label={metrics.cpuTemp === null ? "Unavailable" : `Load ${display(metrics.cpuLoad, "%")}`} color="var(--accent)" />
-                <div className="card-corner">01 / CPU</div>
+              <article className="hardware-card cpu-card" role="link" tabIndex={0} aria-label="Processzor részletei" onClick={() => setActive("Processzor")} onKeyDown={event => { if (event.target !== event.currentTarget) return; if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActive("Processzor"); } }}>
+                <header className="overview-card-heading"><span className="card-icon"><ModuleIcon name="cpu"/></span><div><h2>Processzor</h2><small>{metrics.cpuName}</small></div><button className="hardware-card-arrow" type="button" aria-label="Processzor részletei" onClick={event => { event.stopPropagation(); setActive("Processzor"); }}>›</button></header>
+                <div className="overview-card-telemetry"><UtilizationRing value={metrics.cpuLoad} caption="CPU-terhelés" color="#25e1cb"/><div className="overview-card-metrics"><div className="overview-card-metric"><span>Hőmérséklet</span><strong>{display(metrics.cpuTemp, " °C", 1)}</strong></div><div className="overview-card-metric"><span>Órajel</span><strong>{display(metrics.cpuClock, " MHz", 0)}</strong></div><div className="overview-card-metric"><span>Fogyasztás</span><strong>{display(metrics.cpuPower, " W", 1)}</strong></div></div></div>
+                <MiniTrend values={performanceHistory.map(sample => sample.cpuLoad)} color="var(--accent)" label="Processzor"/>
               </article>
-              <article className="hardware-card gpu-card">
-                <div className="card-icon">▧</div><div className="card-copy"><span>GRAPHICS</span><h2>GPU</h2><p>{metrics.gpuName}</p><button onClick={() => setActive("Grafikus vezérlő")}>Részletek <b>›</b></button></div>
-                <SemiGauge value={metrics.gpuTemp} unit="°C" decimals={1} label={metrics.gpuTemp === null ? "Unavailable" : `Load ${display(metrics.gpuLoad, "%")}`} color="#a98aff" />
-                <div className="card-corner">02 / GPU</div>
+              <article className="hardware-card gpu-card" role="link" tabIndex={0} aria-label="Grafikus vezérlő részletei" onClick={() => setActive("Grafikus vezérlő")} onKeyDown={event => { if (event.target !== event.currentTarget) return; if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActive("Grafikus vezérlő"); } }}>
+                <header className="overview-card-heading"><span className="card-icon"><ModuleIcon name="gpu"/></span><div><h2>Grafikus vezérlő</h2><small>{metrics.gpuName}</small></div><button className="hardware-card-arrow" type="button" aria-label="Grafikus vezérlő részletei" onClick={event => { event.stopPropagation(); setActive("Grafikus vezérlő"); }}>›</button></header>
+                <div className="overview-card-telemetry"><UtilizationRing value={metrics.gpuLoad} caption="GPU-terhelés" color="#b58aff"/><div className="overview-card-metrics"><div className="overview-card-metric"><span>Hőmérséklet</span><strong>{display(metrics.gpuTemp, " °C", 1)}</strong></div><div className="overview-card-metric"><span>Órajel</span><strong>{display(metrics.gpuClock, " MHz", 0)}</strong></div><div className="overview-card-metric"><span>VRAM</span><strong>{formatMemoryMiBAsGiB(metrics.gpuMemoryUsedMiB)} / {formatMemoryMiBAsGiB(metrics.gpuMemoryTotalMiB)}</strong></div><div className="overview-card-metric"><span>Fogyasztás</span><strong>{display(metrics.gpuPower, " W", 1)}</strong></div></div></div>
+                <MiniTrend values={performanceHistory.map(sample => sample.gpuLoad)} color="#ad89ff" label="Grafikus vezérlő"/>
               </article>
-              <article className="hardware-card ram-card">
-                <div className="card-icon">▤</div><div className="card-copy"><span>MEMORY</span><h2>RAM</h2><p>{metrics.ramLoad === null ? "Memory usage unavailable" : `Memory load · ${display(metrics.ramLoad, "%")}`}</p><button onClick={() => setActive("Memória")}>Részletek <b>›</b></button></div>
-                <SemiGauge value={metrics.ramLoad} unit="%" label={metrics.ramLoad === null ? "Unavailable" : "Utilization"} color="#36c9b1" />
-                <div className="card-corner">03 / RAM</div>
+              <article className="hardware-card ram-card" role="link" tabIndex={0} aria-label="Memória részletei" onClick={() => setActive("Memória")} onKeyDown={event => { if (event.target !== event.currentTarget) return; if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActive("Memória"); } }}>
+                <header className="overview-card-heading"><span className="card-icon"><ModuleIcon name="memory"/></span><div><h2>Memória</h2><small>RAM · {display(metrics.ramLoad, "%")} terhelés</small></div><button className="hardware-card-arrow" type="button" aria-label="Memória részletei" onClick={event => { event.stopPropagation(); setActive("Memória"); }}>›</button></header>
+                <div className="overview-card-telemetry"><UtilizationRing value={metrics.ramLoad} caption="Memóriahasználat" color="#22d8bd"/><div className="overview-card-metrics"><div className="overview-card-metric"><span>Használat</span><strong>{memoryUsedDisplay}</strong></div><div className="overview-card-metric"><span>Elérhető</span><strong>{formatMemoryGiB(metrics.ramAvailableGiB)}</strong></div><div className="overview-card-metric"><span>Összesen</span><strong>{memoryTotalDisplay}</strong></div></div></div>
+                <div className="overview-progress-wrap"><div className="overview-progress"><i style={{ width: `${metrics.ramLoad ?? 0}%` }}/></div><small>Jelenlegi memóriahasználat</small></div>
               </article>
-              <article className="hardware-card storage-card">
-                <div className="card-icon">▣</div><div className="card-copy"><span>STORAGE</span><h2>{storageCount} drive{storageCount === 1 ? "" : "s"}</h2><p>{selectedStorage?.name ?? "No storage detected"}</p><button onClick={() => setActive("Háttértárak")}>Részletek <b>›</b></button>
-                  {storageCount > 0 && <div className="storage-pager" aria-label="Storage drive selection">
-                    <button type="button" aria-label="Previous drive" title="Previous drive" disabled={storageCount < 2} onClick={() => setSelectedStorageIndex((activeStorageIndex + storageCount - 1) % storageCount)}>‹</button>
+              <article className="hardware-card storage-card" role="link" tabIndex={0} aria-label="Háttértárak részletei" onClick={() => setActive("Háttértárak")} onKeyDown={event => { if (event.target !== event.currentTarget) return; if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActive("Háttértárak"); } }}>
+                <header className="overview-card-heading"><span className="card-icon"><ModuleIcon name="storage"/></span><div><h2>Háttértárak</h2><small>{storageCount} felismert meghajtó</small></div><button className="hardware-card-arrow" type="button" aria-label="Háttértárak részletei" onClick={event => { event.stopPropagation(); setActive("Háttértárak"); }}>›</button></header>
+                <div className="overview-card-telemetry"><UtilizationRing value={storageUsePercent} caption="Tárhelyhasználat" color="#ac8aff"/><div className="overview-card-metrics"><div className="overview-card-metric"><span>Hőmérséklet</span><strong>{display(selectedStorage?.temperature ?? null, " °C", 1)}</strong></div><div className="overview-card-metric"><span>Használt</span><strong>{storageUsedDisplay}</strong></div><div className="overview-card-metric"><span>Szabad</span><strong>{selectedStorage?.freeSpaceGiB == null ? "N/A" : formatMemoryGiB(selectedStorage.freeSpaceGiB)}</strong></div><div className="overview-card-metric"><span>Állapot</span><strong className={`storage-state-${storageTemperatureStatus}`}>{storageTemperatureStatusLabel}</strong></div></div></div>
+                <div className="storage-pager" aria-label="Meghajtó kiválasztása">
+                    <button type="button" aria-label="Előző meghajtó" disabled={storageCount < 2} onClick={event => { event.stopPropagation(); setSelectedStorageIndex((activeStorageIndex + storageCount - 1) % storageCount); }}>‹</button>
                     <span aria-live="polite">{activeStorageIndex + 1} / {storageCount}</span>
-                    <button type="button" aria-label="Next drive" title="Next drive" disabled={storageCount < 2} onClick={() => setSelectedStorageIndex((activeStorageIndex + 1) % storageCount)}>›</button>
-                  </div>}
+                    <button type="button" aria-label="Következő meghajtó" disabled={storageCount < 2} onClick={event => { event.stopPropagation(); setSelectedStorageIndex((activeStorageIndex + 1) % storageCount); }}>›</button>
+                    <small>{selectedStorage?.name ?? "Nincs felismert meghajtó"}</small>
                 </div>
-                <SemiGauge value={selectedStorage?.temperature ?? null} unit="°C" decimals={1} label={selectedStorage ? selectedStorage.temperature === null ? "No temperature data" : "Drive temperature" : "No temperature data"} color="#e8ad5a" />
-                <div className="card-corner">04 / SSD</div>
+                <div className="overview-progress-wrap"><div className="overview-progress"><i style={{ width: `${storageUsePercent ?? 0}%` }}/></div><small>Jelenlegi tárhelyhasználat</small></div>
               </article>
             </section>
-          </div>
 
           <section className="quick-access">
-            <button className="quick-card" onClick={() => setActive("Teljesítmény")}><span className="quick-icon">▥</span><span><b>Game Analysis</b><small>Játék közbeni teljesítmény és FPS</small></span><i>›</i></button>
-            <button className="quick-card" onClick={() => setActive("Hűtés")}><span className="quick-icon">✣</span><span><b>Optimize my PC</b><small>Hűtés és rendszerállapot kezelése</small></span><i>›</i></button>
-            <button className="quick-card" onClick={() => setActive("Guardian")}><span className="quick-icon">⬡</span><span><b>NEXUS Guardian</b><small>Hibák és figyelmeztetések</small></span><i>›</i></button>
+            <button className="quick-card" onClick={() => setActive("Hűtés")}><span className="quick-icon"><ModuleIcon name="cooling"/></span><span><b>Hűtés</b><small>Hőmérsékletek és ventilátorfordulat</small></span><i>›</i></button>
+            <button className="quick-card" onClick={() => setActive("Teljesítmény")}><span className="quick-icon"><ModuleIcon name="performance"/></span><span><b>Teljesítmény</b><small>Rendszerterhelés és előzmények</small></span><i>›</i></button>
+            <button className="quick-card" onClick={() => setActive("Guardian")}><span className="quick-icon"><ModuleIcon name="guardian"/></span><span><b>Guardian</b><small>Riasztások és állapotváltozások</small></span><i>›</i></button>
+            <button className="quick-card" onClick={() => setActive("Beállítások")}><span className="quick-icon"><ModuleIcon name="settings"/></span><span><b>Beállítások</b><small>Téma és riasztási küszöbértékek</small></span><i>›</i></button>
           </section>
           </>}
           {active === "Beállítások" && <section className="diagnostics-panel"><h2>Beállítások</h2>
             <div className="diagnostics-row settings-updater-row"><b>Programfrissítés</b><span>{updateMessage || "Indításkor automatikusan keres új verziót."}</span><div className="settings-updater-actions"><button className="settings-secondary-button" type="button" disabled={updateBusy} onClick={() => void checkForUpdates()}>{updateBusy ? "Ellenőrzés…" : "Frissítések keresése"}</button>{availableUpdate && <button className="settings-save-button" type="button" disabled={updateBusy} onClick={() => void installAvailableUpdate()}>Frissítés telepítése</button>}</div></div>
             <div className="diagnostics-row"><b>Megjelenési téma</b>
-              <span><select className="settings-theme-select" value={theme} onChange={event => setTheme(event.target.value as Theme)} aria-label="Megjelenési téma">
-                {themes.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-              </select></span>
+              <span><ThemePicker value={theme} onChange={setTheme} className="settings-theme-picker" /></span>
               <small>A választás automatikusan mentésre kerül ezen a gépen.</small>
+            </div>
+            <div className="settings-extra-section">
+              <div className="settings-extra-heading"><ModuleIcon name="settings"/><div><b>Extra beállítások</b><small>Saját háttér, NEXUS telepítő és választható segédprogramok.</small></div></div>
+              <div className="settings-extra-grid">
+                <article className="settings-extra-card"><b>Háttérkép</b><small>A kiválasztott kép csak ezen a gépen, a jelenlegi téma fölötti háttérként jelenik meg.</small><div><label className="settings-secondary-button file-picker-button">Kép kiválasztása<input type="file" accept="image/png,image/jpeg,image/webp" onChange={event => chooseBackground(event.currentTarget.files?.[0] ?? null)} /></label>{customBackground && <button className="settings-secondary-button" type="button" onClick={() => { setCustomBackground(""); setBackgroundMessage("Az egyéni háttér törölve."); }}>Alapértelmezett</button>}</div>{backgroundMessage && <em>{backgroundMessage}</em>}</article>
+                <article className="settings-extra-card"><b>NEXUS telepítő</b><small>A tesztkiadások és a teljes telepítő a GitHub kiadási oldalon érhető el. A program ezután saját maga ellenőrzi a frissítéseket.</small><div><button className="settings-secondary-button" type="button" onClick={() => void openUrl("https://github.com/hegehun/nexus/releases")}>Kiadások megnyitása</button></div></article>
+              </div>
+              <div className="settings-tools-heading"><b>Eszköztelepítő</b><small>Opcionális, külső programok. A NEXUS működéséhez nem szükségesek.</small></div>
+              <div className="settings-tool-grid">
+                <article><b>Fan Control</b><small>Haladó ventilátorprofilok és görbék.</small><button className="settings-secondary-button" type="button" onClick={() => void openUrl("https://getfancontrol.com/")}>Hivatalos letöltés</button></article>
+                <article><b>HWiNFO</b><small>Részletes hardverdiagnosztika és érzékelők.</small><button className="settings-secondary-button" type="button" onClick={() => void openUrl("https://www.hwinfo.com/download/")}>Hivatalos letöltés</button></article>
+                <article><b>MSI Afterburner</b><small>Videokártya-hangolás és alternatív játékos kijelző.</small><button className="settings-secondary-button" type="button" onClick={() => void openUrl("https://www.msi.com/Landing/afterburner/graphics-cards")}>Hivatalos letöltés</button></article>
+              </div>
             </div>
             <div className="diagnostics-row settings-recommendation-row"><b>Javasolt beállítás</b><span className="settings-recommended-values">CPU / GPU 85 / 95 °C · memória 90 / 97% · tárhely 70 / 80 °C</span><button className="settings-secondary-button" type="button" onClick={applyRecommendedThresholds}>Ajánlott betöltése</button></div>
             {renderThresholdRow("CPU riasztási küszöb", "cpuWarning", "cpuCritical", "°C", 40, 110, 41, 120)}
@@ -938,7 +1127,7 @@ function App() {
             <div className="diagnostics-row"><b>Windows aktiválása</b><span>{snapshot?.WindowsInfo?.IsActivated == null ? "N/A" : snapshot.WindowsInfo.IsActivated ? "Aktiválva" : "Nincs aktiválva"}</span><small>Windows licencállapot</small></div>
             <div className="system-section-label">Rendszer</div>
             <div className="diagnostics-row"><b>Gyártó</b><span>{snapshot?.WindowsInfo?.Manufacturer ?? "N/A"}</span><small>BIOS rendszeradat</small></div>
-            <div className="diagnostics-row"><b>Típus</b><span>{snapshot?.WindowsInfo?.Model ?? "N/A"}</span><small>BIOS rendszeradat</small></div>
+            <div className="diagnostics-row"><b>Típus</b><span>{snapshot?.WindowsInfo?.Model ?? "N/A"}</span><small>{snapshot?.WindowsInfo?.ModelSource ?? "A BIOS nem adott meg géptípust"}</small></div>
             <div className="diagnostics-row"><b>Processzor</b><span>{metrics.cpuName}</span><small>{snapshot?.LogicalProcessorCount ?? "N/A"} logikai processzor</small></div>
             <div className="diagnostics-row"><b>Memória (RAM)</b><span>{snapshot?.WindowsInfo?.UsableMemoryGb == null ? "N/A" : `${snapshot.WindowsInfo.UsableMemoryGb.toFixed(1)} GB`}</span><small>A Windows számára használható fizikai memória</small></div>
             <div className="diagnostics-row"><b>Rendszer típusa</b><span>{snapshot?.WindowsInfo?.SystemType ?? "N/A"}</span><small>Operációs rendszer és processzorarchitektúra</small></div>
@@ -961,12 +1150,37 @@ function App() {
                 { key: "gpuTemp", label: "GPU", color: "#a98aff" },
               ]} />
             </div>
-            <section className="performance-fps-panel"><div><h2>Játék FPS</h2><small>Játék közbeni képkockaadatot a jelenlegi hardveres adatforrás nem szolgáltat.</small></div><strong>N/A</strong></section>
+            <section className="performance-fps-panel">
+              <div className="performance-fps-copy"><h2>Játék FPS</h2><small>{gameFpsStatus.message}</small>
+                {gameFpsError && <small className="performance-fps-error">{gameFpsError}</small>}
+                <div className="performance-fps-controls">
+                  <select aria-label="Mérendő játék kiválasztása" value={selectedGameProcessId} onChange={event => setSelectedGameProcessId(event.target.value)} disabled={gameFpsStatus.isRunning}>
+                    <option value="">Válassz futó játékot…</option>
+                    {gameProcesses.map(process => <option key={`${process.processId}-${process.processName}`} value={process.processId}>{process.processName} · PID {process.processId}</option>)}
+                  </select>
+                  <button type="button" onClick={() => void refreshGameProcessList()} disabled={gameFpsStatus.isRunning}>Játéklista frissítése</button>
+                  {gameFpsStatus.isRunning
+                    ? <button type="button" onClick={() => void stopGameFps()}>Mérés leállítása</button>
+                    : <button type="button" onClick={() => void startGameFps()} disabled={!selectedGameProcessId}>Mérés indítása</button>}
+                </div>
+                <label className="performance-fps-autostart"><input type="checkbox" checked={autoFpsEnabled} onChange={event => setAutoFpsEnabled(event.target.checked)} /> <span>Automatikus indítás</span><small>{autoFpsGames.length ? `A NEXUS figyeli: ${autoFpsGames.join(", ")}` : "Indíts el egyszer egy játékot, hogy a NEXUS megjegyezze."}</small></label>
+                <small className="performance-fps-note">A mérés a Windows képkocka-eseményeit olvassa. Ha a Windows hozzáférést tilt, a fióknak Performance Log Users jogosultság szükséges.</small>
+              </div>
+              <div className="performance-fps-value"><strong>{gameFpsStatus.fps == null ? "N/A" : Math.round(gameFpsStatus.fps)}</strong><span>FPS</span>
+                {gameFpsStatus.processName && <small>{gameFpsStatus.processName}</small>}
+              </div>
+              <div className="performance-fps-session-stats">
+                <div><span>Átlag</span><strong>{gameFpsStatus.averageFps == null ? "N/A" : Math.round(gameFpsStatus.averageFps) + " FPS"}</strong></div>
+                <div><span>1% low</span><strong>{gameFpsStatus.onePercentLowFps == null ? "N/A" : Math.round(gameFpsStatus.onePercentLowFps) + " FPS"}</strong></div>
+                <div><span>Képkockaidő</span><strong>{gameFpsStatus.frameTimeMs == null ? "N/A" : gameFpsStatus.frameTimeMs.toFixed(1) + " ms"}</strong></div>
+                <button type="button" className="performance-overlay-open" disabled={!gameFpsStatus.isRunning} onClick={async () => { const overlay = await WebviewWindow.getByLabel("fps-overlay"); if (overlay) { await overlay.setAlwaysOnTop(true); await overlay.show(); } else await startGameFps(); }}>FPS-kijelző megnyitása</button>
+              </div>
+            </section>
           </div>}
           {active === "Hűtés" && <div className="cooling-view">
             <section className="cooling-summary-panel">
               <div className={`cooling-status-banner cooling-status-${coolingStatus}`} role="status">
-                <span>HŰTÉSI ÁLLAPOT</span>
+                <span><ModuleIcon name="cooling"/>HŰTÉSI ÁLLAPOT</span>
                 <strong>{coolingStatus === "critical" ? "Kritikus" : coolingStatus === "warning" ? "Figyelmeztetés" : coolingStatus === "good" ? "Normál" : "N/A"}</strong>
                 <small>{coolingStatus === "unknown" ? "Nincs használható hőmérsékletadat." : "CPU, GPU és háttértárak mért hőfokai alapján."}</small>
               </div>
@@ -974,7 +1188,7 @@ function App() {
                 {coolingTemperatureReadings.map(reading => {
                   const level = reading.value === null ? "unknown" : reading.value >= reading.critical ? "critical" : reading.value >= reading.warning ? "warning" : "good";
                   return <article className={`cooling-temperature-card cooling-temperature-${level}`} key={reading.key} style={{ "--cooling-color": reading.color } as React.CSSProperties}>
-                    <span>{reading.label}</span>
+                    <span><ModuleIcon name="temperature"/>{reading.label}</span>
                     <strong>{display(reading.value, " °C", 1)}</strong>
                     <small>{reading.value === null ? "Nincs elérhető hőfokadat" : `Figyelmeztetés ${reading.warning} °C · Kritikus ${reading.critical} °C`}</small>
                   </article>;
@@ -1012,38 +1226,39 @@ function App() {
             <section className="diagnostics-panel cpu-detail-panel">
               <h2>{metrics.cpuName} · Áttekintés</h2>
               <div className="cpu-detail-summary-grid">
-                <div className="cpu-detail-stat"><span>Összterhelés</span><strong>{display(metrics.cpuLoad, "%")}</strong><small>Logikai processzorok összesen</small></div>
-                <div className="cpu-detail-stat"><span>Hőmérséklet</span><strong>{display(metrics.cpuTemp, " °C", 1)}</strong><small>Elérhető CPU hőmérséklet-szenzor</small></div>
-                <div className="cpu-detail-stat"><span>Magok átlagos órajele</span><strong>{display(cpuAverageClock, " MHz", 0)}</strong><small>{cpuCoreReadings.filter(core => core.clock !== null).length} magból mérve</small></div>
-                <div className="cpu-detail-stat"><span>Logikai processzorok</span><strong>{snapshot?.LogicalProcessorCount ?? "N/A"}</strong><small>A Windows által jelentett szám</small></div>
+                <div className="cpu-detail-stat"><span><ModuleIcon name="load"/>Összterhelés</span><strong>{display(metrics.cpuLoad, "%")}</strong><small>Logikai processzorok összesen</small></div>
+                <div className="cpu-detail-stat"><span><ModuleIcon name="temperature"/>Hőmérséklet</span><strong>{display(metrics.cpuTemp, " °C", 1)}</strong><small>Elérhető CPU hőmérséklet-szenzor</small></div>
+                {cpuAverageClock !== null && <div className="cpu-detail-stat"><span><ModuleIcon name="cpu"/>Logikai processzorok átlagos órajele</span><strong>{display(cpuAverageClock, " MHz", 0)}</strong><small>{cpuCoreReadings.filter(core => core.clock !== null).length} szálból mérve</small></div>}
+                <div className="cpu-detail-stat"><span><ModuleIcon name="cpu"/>Logikai processzorok</span><strong>{snapshot?.LogicalProcessorCount ?? "N/A"}</strong><small>A Windows által jelentett szám</small></div>
               </div>
             </section>
             <section className="diagnostics-panel cpu-detail-panel">
-              <div className="cpu-detail-heading"><h2>Magonkénti adatok</h2><small>{cpuCoreReadings.length} felismert mag</small></div>
+              <div className="cpu-detail-heading"><h2>Logikai processzoronkénti adatok</h2><small>{cpuCoreReadings.length} felismert szál · a szálak nem külön fizikai magokat jelentenek</small></div>
+              <p className="cpu-detail-note">Csak az elérhető szálankénti adatokat jelenítjük meg. A processzor hőmérséklete a fenti összesített értéknél látható.</p>
               {cpuCoreReadings.length === 0
                 ? <p>A hardveres adatforrás nem szolgáltat külön magonkénti terhelés-, órajel- vagy hőmérsékletadatot.</p>
                 : <div className="cpu-core-grid">{cpuCoreReadings.map(core =>
                   <article className="cpu-core-card" key={"cpu-core-" + core.number}>
-                    <div className="cpu-core-card-heading"><b>Mag {core.number}</b><span>{display(core.load, "%")}</span></div>
+                    <div className="cpu-core-card-heading"><b>Logikai szál {core.number}</b><span>{display(core.load, "%")}</span></div>
                     <div className="cpu-core-load-track"><i style={{ width: core.load === null ? "0%" : Math.max(0, Math.min(100, core.load)) + "%" }} /></div>
                     <div className="cpu-core-metrics">
-                      <div><small>Órajel</small><strong>{display(core.clock, " MHz", 0)}</strong></div>
-                      <div><small>Hőmérséklet</small><strong>{display(core.temperature, " °C", 1)}</strong></div>
+                      {core.clock !== null && <div><small>Órajel</small><strong>{display(core.clock, " MHz", 0)}</strong></div>}
+                      {core.temperature !== null && <div><small>Hőmérséklet</small><strong>{display(core.temperature, " °C", 1)}</strong></div>}
                     </div>
                   </article>)}</div>}
             </section>
           </>}
           {active === "Grafikus vezérlő" && <>
-            <section className="diagnostics-panel device-detail-panel">
+            <section className="diagnostics-panel device-detail-panel gpu-detail-panel">
               <h2>{metrics.gpuName} · Áttekintés</h2>
               <div className="cpu-detail-summary-grid">
-                <div className="cpu-detail-stat"><span>GPU-terhelés</span><strong>{display(metrics.gpuLoad, "%")}</strong><small>Élő terhelésadat</small></div>
-                <div className="cpu-detail-stat"><span>Hőmérséklet</span><strong>{display(metrics.gpuTemp, " °C", 1)}</strong><small>Elérhető GPU hőmérséklet-szenzor</small></div>
-                <div className="cpu-detail-stat"><span>Magórajel</span><strong>{display(metrics.gpuClock, " MHz", 0)}</strong><small>GPU Core</small></div>
-                <div className="cpu-detail-stat"><span>Teljesítmény</span><strong>{display(metrics.gpuPower, " W", 1)}</strong><small>Ha a GPU szolgáltat ilyen adatot</small></div>
+                <div className="cpu-detail-stat"><span><ModuleIcon name="load"/>GPU-terhelés</span><strong>{display(metrics.gpuLoad, "%")}</strong><small>Élő terhelésadat</small></div>
+                <div className="cpu-detail-stat"><span><ModuleIcon name="temperature"/>Hőmérséklet</span><strong>{display(metrics.gpuTemp, " °C", 1)}</strong><small>Elérhető GPU hőmérséklet-szenzor</small></div>
+                <div className="cpu-detail-stat"><span><ModuleIcon name="gpu"/>Magórajel</span><strong>{display(metrics.gpuClock, " MHz", 0)}</strong><small>GPU Core</small></div>
+                <div className="cpu-detail-stat"><span><ModuleIcon name="performance"/>Teljesítmény</span><strong>{display(metrics.gpuPower, " W", 1)}</strong><small>Ha a GPU szolgáltat ilyen adatot</small></div>
               </div>
             </section>
-            <section className="diagnostics-panel device-detail-panel">
+            <section className="diagnostics-panel device-detail-panel gpu-detail-panel gpu-memory-panel">
               <div className="cpu-detail-heading"><h2>Videomemória · VRAM</h2><small>{gpuMemoryPercent === null ? "Nincs VRAM-kihasználtsági adat" : display(gpuMemoryPercent, "%", 1)}</small></div>
               {gpuMemoryPercent !== null && <div className="device-memory-track"><i style={{ width: gpuMemoryPercent + "%" }} /></div>}
               <div className="device-memory-values">
@@ -1054,13 +1269,13 @@ function App() {
             </section>
           </>}
           {active === "Memória" && <>
-            <section className="diagnostics-panel device-detail-panel">
+            <section className="diagnostics-panel device-detail-panel ram-detail-panel">
               <h2>Rendszermemória · Áttekintés</h2>
               <div className="cpu-detail-summary-grid">
-                <div className="cpu-detail-stat"><span>Használt memória</span><strong>{formatMemoryGiB(metrics.ramUsedGiB)}</strong><small>Mért fizikai memóriahasználat</small></div>
-                <div className="cpu-detail-stat"><span>Szabad memória</span><strong>{formatMemoryGiB(metrics.ramAvailableGiB)}</strong><small>Mért, jelenleg elérhető memória</small></div>
-                <div className="cpu-detail-stat"><span>Összesen</span><strong>{memoryTotalDisplay}</strong><small>Fizikai memória</small></div>
-                <div className="cpu-detail-stat"><span>Terhelés</span><strong>{display(metrics.ramLoad, "%")}</strong><small>Rendszermemória használata</small></div>
+                <div className="cpu-detail-stat"><span><ModuleIcon name="capacity"/>Használt memória</span><strong>{formatMemoryGiB(metrics.ramUsedGiB)}</strong><small>Mért fizikai memóriahasználat</small></div>
+                <div className="cpu-detail-stat"><span><ModuleIcon name="capacity"/>Szabad memória</span><strong>{formatMemoryGiB(metrics.ramAvailableGiB)}</strong><small>Mért, jelenleg elérhető memória</small></div>
+                <div className="cpu-detail-stat"><span><ModuleIcon name="memory"/>Összesen</span><strong>{memoryTotalDisplay}</strong><small>Fizikai memória</small></div>
+                <div className="cpu-detail-stat"><span><ModuleIcon name="load"/>Terhelés</span><strong>{display(metrics.ramLoad, "%")}</strong><small>Rendszermemória használata</small></div>
               </div>
               {metrics.ramLoad !== null && <div className="device-memory-track"><i className="memory-fill" style={{ width: Math.max(0, Math.min(100, metrics.ramLoad)) + "%" }} /></div>}
             </section>
@@ -1096,7 +1311,7 @@ function App() {
                     ["temperature", "load", "level", "power", "fan", "voltage", "data"].includes(type);
                 });
                 return <article className="storage-device-card" key={drive.name + "-" + index}>
-                  <div className="storage-device-heading"><h3>{drive.name}</h3><span className={drive.status === "Monitoring" ? "storage-live-status" : "storage-empty-status"}>{drive.status === "Monitoring" ? "ÉLŐ ADAT" : "NINCS ADAT"}</span></div>
+                  <div className="storage-device-heading"><span className="storage-device-icon"><ModuleIcon name="storage"/></span><h3>{drive.name}</h3></div>
                   <div className="storage-device-temperature"><small>Hőmérséklet</small><strong>{display(drive.temperature, " °C", 1)}</strong></div>
                   <div className="storage-space-values">
                     <div><small>Teljes kapacitás</small><strong>{formatMemoryGiB(drive.totalSpaceGiB)}</strong></div>
@@ -1115,7 +1330,11 @@ function App() {
                 </article>;
               })}</div>}
             </section>
-          </div>}          {active === "Guardian" && <section className="diagnostics-panel"><h2>Guardian · Szenzoresemények</h2>{(snapshot?.GuardianEvents ?? []).length === 0 ? <p>Nincs aktív vagy friss riasztás.</p> : snapshot?.GuardianEvents?.map(event => <div className={`diagnostics-row alert-${event.Severity.toLowerCase()}`} key={event.Id}><b>{event.Device} · {event.Sensor}</b><span>{event.Severity}</span><small>{event.Message} · {event.IsActive ? "Aktív" : "Lezárva"}</small></div>)}</section>}
+          </div>}                    {active === "Guardian" && <section className="diagnostics-panel guardian-events-panel"><h2>Guardian · Szenzoresemények</h2>{(snapshot?.GuardianEvents ?? []).length === 0 ? <p>Nincs aktív vagy friss riasztás.</p> : <div className="guardian-event-list">{snapshot?.GuardianEvents?.map(event => <article className={`guardian-event-card alert-${event.Severity.toLowerCase()}`} key={event.Id}>
+            <header><b>{event.Device} · {translateSensorName(event.Sensor)}</b><span>{translateSeverity(event.Severity)}</span><small>{event.IsActive ? "Aktív" : "Lezárva"}</small></header>
+            <p className="guardian-event-message">{guardianMessageSummary(event)}</p>
+            <details className="guardian-guidance"><summary>Mit ellenőrizzek?</summary><p>{guardianGuidance(event)}</p></details>
+          </article>)}</div>}</section>}
           <footer className="content-footer"><span>NEXUS HARDWARE INTELLIGENCE</span><span><i /> {snapshot ? `LAST UPDATE · ${snapshot.Timestamp ?? "LIVE"}` : (engineError ? `ENGINE ERROR · ${engineError}` : "WAITING FOR HARDWARE DATA")}</span></footer>
         </div>
       </section>

@@ -1,7 +1,6 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Channels;
 using NEXUS.Hardware.Services;
 
 Console.OutputEncoding = Encoding.UTF8;
@@ -22,8 +21,6 @@ var options = new JsonSerializerOptions
 };
 options.Converters.Add(new NullableFiniteSingleConverter());
 
-var commandQueue = Channel.CreateUnbounded<FanControlCommand>();
-var commandOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 _ = Task.Run(async () =>
 {
     while (!shutdown.IsCancellationRequested)
@@ -32,8 +29,10 @@ _ = Task.Run(async () =>
         if (line is null) break;
         try
         {
-            var command = JsonSerializer.Deserialize<FanControlCommand>(line, commandOptions);
-            if (command is not null) await commandQueue.Writer.WriteAsync(command);
+            using var message = JsonDocument.Parse(line);
+            if (message.RootElement.TryGetProperty("action", out var action) &&
+                string.Equals(action.GetString(), "shutdown", StringComparison.OrdinalIgnoreCase))
+                shutdown.Cancel();
         }
         catch (Exception ex)
         {
@@ -55,18 +54,6 @@ try
 
     while (!shutdown.IsCancellationRequested)
     {
-        while (commandQueue.Reader.TryRead(out var command))
-        {
-            if (string.Equals(command.Action, "shutdown", StringComparison.OrdinalIgnoreCase))
-            {
-                shutdown.Cancel();
-                break;
-            }
-
-            var result = monitor.SetSoftwareControl(command.SensorIdentifier, command.Value);
-            Console.Out.WriteLine(JsonSerializer.Serialize(new { controlCommandId = command.CommandId, success = result.Success, message = result.Message }, options));
-            Console.Out.Flush();
-        }
         if (shutdown.IsCancellationRequested) break;
 
         var snapshot = monitor.ReadSnapshot();
@@ -95,8 +82,6 @@ finally
 {
     Console.Error.WriteLine("NEXUS hardware engine stopped.");
 }
-
-sealed record FanControlCommand(long CommandId, string Action, string SensorIdentifier, float? Value);
 
 sealed class NullableFiniteSingleConverter : JsonConverter<float?>
 {

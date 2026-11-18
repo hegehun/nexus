@@ -73,8 +73,8 @@ public sealed class DiagnosticsService
             : parts.Any(p => p.Score <= 35) || score < 60 ? "Critical"
             : parts.Any(p => p.Score < 100) || score < 85 ? "Warning"
             : "Good";
-        var reasons = parts.Select(p => $"{p.Name}: {p.Score}/100; {p.Explanation}").ToArray();
-        if (parts.Count < 4) reasons = reasons.Append("The score uses available CPU, GPU, memory, and storage sensors only.").ToArray();
+        var reasons = parts.Select(p => $"{DisplayCategory(p.Name)}: {p.Score}/100 — {p.Explanation}").ToArray();
+        if (parts.Count < 4) reasons = reasons.Append("A pontszám a rendelkezésre álló processzor-, grafikus vezérlő-, memória- és háttértár-szenzorokból készül.").ToArray();
 
         UpdateAlerts(cpuReading is null ? [] : [cpuReading], "CPU", "Temperature", "Temperature", activeThresholds.CpuWarning, activeThresholds.CpuCritical, ["CPU Package", "Core (Tctl/Tdie)", "CPU Core", "Core Max"], now);
         UpdateAlerts(gpuReading is null ? [] : [gpuReading], "GPU", "Temperature", "Temperature", activeThresholds.GpuWarning, activeThresholds.GpuCritical, ["GPU Core", "GPU Temperature", "GPU Hot Spot"], now);
@@ -93,11 +93,11 @@ public sealed class DiagnosticsService
         var value = values.DefaultIfEmpty(float.NaN).Max();
         if (!float.IsFinite(value)) return;
         var points = value >= critical ? 35 : value >= warning ? 70 : 100;
-        var condition = points == 35 ? $"critical at or above {critical:0} °C" : points == 70 ? $"warning at or above {warning:0} °C" : $"below the {warning:0} °C warning threshold";
+        var condition = points == 35 ? $"eléri vagy meghaladja a kritikus küszöböt ({critical:0} °C)" : points == 70 ? $"eléri vagy meghaladja a figyelmeztetési küszöböt ({warning:0} °C)" : $"a figyelmeztetési küszöb ({warning:0} °C) alatt van";
         var readingDescription = label.Equals("Storage", StringComparison.OrdinalIgnoreCase)
-            ? "highest current temperature across monitored drives"
-            : "current temperature";
-        parts.Add((label, weight, points, $"{readingDescription} {value:0.0} °C, {condition}."));
+            ? "A figyelt meghajtók közül a legmagasabb aktuális hőmérséklet"
+            : "Aktuális hőmérséklet";
+        parts.Add((label, weight, points, $"{readingDescription}: {value:0.0} °C, {condition}."));
     }
 
     private static void AddLoad(IEnumerable<HardwareDevice> devices, string label, int weight, float warning, float critical, IReadOnlyList<string> names, List<(string Name, int Weight, int Score, string Explanation)> parts)
@@ -106,8 +106,8 @@ public sealed class DiagnosticsService
         var value = values.DefaultIfEmpty(float.NaN).Max();
         if (!float.IsFinite(value)) return;
         var points = value >= critical ? 35 : value >= warning ? 70 : 100;
-        var condition = points == 35 ? $"critical at or above {critical:0}%" : points == 70 ? $"warning at or above {warning:0}%" : $"below the {warning:0}% warning threshold";
-        parts.Add((label, weight, points, $"current load {value:0.0}%, {condition}."));
+        var condition = points == 35 ? $"eléri vagy meghaladja a kritikus küszöböt ({critical:0}%)" : points == 70 ? $"eléri vagy meghaladja a figyelmeztetési küszöböt ({warning:0}%)" : $"a figyelmeztetési küszöb ({warning:0}%) alatt van";
+        parts.Add((label, weight, points, $"Aktuális terhelés: {value:0.0}%, {condition}."));
     }
 
     private void UpdateAlerts(IEnumerable<HardwareDevice> devices, string category, string sensorType, string kind, float warning, float critical, IReadOnlyList<string> names, DateTimeOffset now)
@@ -127,7 +127,8 @@ public sealed class DiagnosticsService
                 current.Add(key);
                 var unit = kind.Equals("Temperature", StringComparison.OrdinalIgnoreCase) ? " °C" : "%";
                 var threshold = severity == "Critical" ? critical : warning;
-                var message = $"{category} {sensor.Name}: {value:0.0}{unit}; {severity.ToLowerInvariant()} threshold is {threshold:0.0}{unit}.";
+                var severityLabel = severity == "Critical" ? "Kritikus" : "Figyelmeztetési";
+                var message = $"{DisplayCategory(category)} · {TranslateSensorName(sensor.Name)}: {value:0.0}{unit}; {severityLabel.ToLowerInvariant()} küszöb: {threshold:0.0}{unit}.";
                 if (!_activeEvents.TryGetValue(key, out var existing))
                 {
                     var created = new GuardianEvent(Guid.NewGuid().ToString("N"), sensor.Identifier, device.Name, sensor.Name, severity, message, now, true, null);
@@ -167,6 +168,32 @@ public sealed class DiagnosticsService
         return candidates.FirstOrDefault(s => names.Any(name => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
             ?? candidates.FirstOrDefault(s => names.Any(name => s.Name.Contains(name, StringComparison.OrdinalIgnoreCase)));
     }
+
+    private static string DisplayCategory(string category) => category.ToLowerInvariant() switch
+    {
+        "cpu" => "Processzor",
+        "gpu" => "Grafikus vezérlő",
+        "memory" => "Memória",
+        "storage" => "Háttértár",
+        _ => category,
+    };
+
+    private static string TranslateSensorName(string name) => name.ToLowerInvariant() switch
+    {
+        "cpu package" => "CPU-csomag",
+        "core (tctl/tdie)" => "Processzormag (Tctl/Tdie)",
+        "cpu core" => "Processzormag",
+        "gpu core" => "GPU-mag",
+        "gpu temperature" => "GPU-hőmérséklet",
+        "gpu hot spot" => "GPU-hotspot",
+        "composite" => "Összesített hőmérséklet",
+        "drive temperature" => "Meghajtó-hőmérséklet",
+        "memory" => "Memória",
+        "physical memory" => "Fizikai memória",
+        "used memory" => "Használt memória",
+        "total memory" => "Teljes memória",
+        _ => name,
+    };
 
     private static bool IsThresholdSensor(string name) =>
         name.Contains("Warning", StringComparison.OrdinalIgnoreCase) ||

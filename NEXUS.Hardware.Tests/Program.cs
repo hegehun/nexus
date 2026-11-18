@@ -59,8 +59,8 @@ var multipleDrives = diagnostics.Evaluate([
 ], now.AddMilliseconds(900));
 var activeDriveEvents = multipleDrives.Events.Where(e => e.IsActive && e.Device.StartsWith("SSD ", StringComparison.Ordinal)).ToArray();
 Assert(activeDriveEvents.Length == 2 && activeDriveEvents.Select(e => e.Device).OrderBy(name => name).SequenceEqual(["SSD A", "SSD B"]) && activeDriveEvents.Single(e => e.Device == "SSD B").Severity == "Critical", "Each hot drive should maintain its own Guardian alert and severity.");
-var expectedStorageExplanation = $"highest current temperature across monitored drives {83.0:0.0} °C";
-Assert(multipleDrives.Health.Reasons.Any(r => r.StartsWith("Storage:") && r.Contains(expectedStorageExplanation)), "Storage Health should explain that it uses the hottest current drive reading.");
+var expectedStorageExplanation = $"A figyelt meghajtók közül a legmagasabb aktuális hőmérséklet: {83.0:0.0} °C";
+Assert(multipleDrives.Health.Reasons.Any(r => r.StartsWith("Háttértár:") && r.Contains(expectedStorageExplanation)), "Storage Health should explain that it uses the hottest current drive reading.");
 
 var hotCpu = Device("CPU", "Cpu", "CPU Package", "Temperature", 87);
 var warning = diagnostics.Evaluate([hotCpu, .. normal.Skip(1)], now.AddSeconds(1));

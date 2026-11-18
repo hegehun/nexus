@@ -22,11 +22,7 @@ public sealed record SensorReading(
     string SensorType,
     float? Value,
     string Identifier,
-    string Status,
-    bool CanControl = false,
-    float? MinimumControlValue = null,
-    float? MaximumControlValue = null,
-    string? ControlMode = null);
+    string Status);
 
 public sealed record HealthReport(int? Score, int CoveragePercent, string Status, IReadOnlyList<string> Reasons);
 
@@ -48,4 +44,5 @@ public sealed record WindowsSystemInfo(
     string? Model,
     string SystemType,
     double? UsableMemoryGb,
-    bool? IsActivated);
+    bool? IsActivated,
+    string? ModelSource = null);

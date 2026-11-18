@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="72" viewBox="0 0 220 72" fill="none">
+  <defs>
+    <linearGradient id="cyan" x1="4" y1="8" x2="43" y2="62" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#54F2E0"/>
+      <stop offset="1" stop-color="#13C9D5"/>
+    </linearGradient>
+    <linearGradient id="violet" x1="36" y1="8" x2="72" y2="62" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C994FF"/>
+      <stop offset="1" stop-color="#7759EF"/>
+    </linearGradient>
+  </defs>
+  <path d="M3 57 22 13h12L19 57H3Z" fill="url(#cyan)"/>
+  <path d="m12 57 40-44h14L27 57H12Z" fill="url(#cyan)"/>
+  <path d="m43 57 20-44h13L58 57H43Z" fill="url(#violet)"/>
+  <text x="82" y="48" fill="#F2F6FF" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="31" font-weight="750" letter-spacing="2.1">NEXUS</text>
+  <text x="84" y="62" fill="#758DAE" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="6.5" font-weight="600" letter-spacing="2.1">HARDWARE INTELLIGENCE</text>
+</svg>
