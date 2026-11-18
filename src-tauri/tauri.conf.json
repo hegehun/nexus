@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "npm run build:hardware && npm run build",
     "frontendDist": "../dist"
   },
   "app": {
@@ -30,14 +30,17 @@
   "bundle": {
     "active": true,
     "createUpdaterArtifacts": true,
-    "targets": "all",
+    "targets": "nsis",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "resources": {
+      "resources/hardware-engine/NEXUS.Hardware.exe": "hardware-engine/NEXUS.Hardware.exe"
+    }
   },
   "plugins": {
     "updater": {

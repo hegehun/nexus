@@ -117,34 +117,40 @@ impl Default for EngineState {
 }
 
 #[tauri::command]
-fn start_hardware_engine(state: State<'_, EngineState>) -> Result<String, String> {
+fn start_hardware_engine(app: tauri::AppHandle, state: State<'_, EngineState>) -> Result<String, String> {
     if state.running.load(Ordering::SeqCst) {
         return Ok("already_running".into());
     }
 
     stop_engine_inner(&state);
 
-    let manifest = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let project_root = manifest
-        .parent()
-        .ok_or_else(|| "NEXUS project root not found".to_string())?;
-    let hardware_project = project_root.join("NEXUS.Hardware").join("NEXUS.Hardware.csproj");
+    let bundled_engine = app.path().resource_dir().ok()
+        .map(|resources| resources.join("hardware-engine").join("NEXUS.Hardware.exe"));
+    let mut command = if let Some(engine) = bundled_engine.filter(|path| path.is_file()) {
+        let engine_dir = engine.parent().ok_or_else(|| "Hardware engine directory not found".to_string())?.to_path_buf();
+        let mut command = Command::new(&engine);
+        command.arg("1000").current_dir(engine_dir);
+        command
+    } else {
+        #[cfg(debug_assertions)]
+        {
+            let manifest = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+            let project_root = manifest.parent().ok_or_else(|| "NEXUS project root not found".to_string())?;
+            let hardware_project = project_root.join("NEXUS.Hardware").join("NEXUS.Hardware.csproj");
+            if !hardware_project.exists() {
+                return Err(format!("Hardware project not found: {}", hardware_project.display()));
+            }
+            let mut command = Command::new("dotnet");
+            command.arg("run").arg("--project").arg(&hardware_project).arg("--").arg("1000").current_dir(project_root);
+            command
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            return Err("A telepített NEXUS-ból hiányzik a beépített hardvermotor.".into());
+        }
+    };
 
-    if !hardware_project.exists() {
-        return Err(format!("Hardware project not found: {}", hardware_project.display()));
-    }
-
-    let mut command = Command::new("dotnet");
-    command
-        .arg("run")
-        .arg("--project")
-        .arg(&hardware_project)
-        .arg("--")
-        .arg("1000")
-        .current_dir(project_root)
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped());
+    command.stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::piped());
 
     #[cfg(windows)]
     {
